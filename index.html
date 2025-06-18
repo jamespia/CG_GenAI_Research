@@ -9,536 +9,829 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony (Light neutrals with muted teal and warm sand accents) -->
-    <!-- Application Structure Plan: The SPA is designed as an interactive journey, not a static document. It starts with a high-level dashboard ("The Pulse") to provide immediate, quantifiable insights. The core of the app is a balanced exploration of "Opportunity & Risk," allowing users to compare benefits and challenges side-by-side. This is followed by a practical, filterable "GenAI in Action" section to ground the concepts in real-world use cases. The journey then shifts to the human impact in "The Future of Work," focusing on roles and skills, and introduces the nuanced concept of AI as "Co-pilot vs. Co-thinker". It concludes with an actionable "Strategic Roadmap." This non-linear, thematic structure was chosen over the report's sequential layout to empower users to explore topics based on their interest, making the complex information more digestible and engaging. -->
+    <!-- Chosen Palette: Calm Corporate Tech -->
+    <!-- Application Structure Plan: The SPA is structured thematically rather than linearly to improve usability and exploration. A fixed top navigation allows users to jump between key concepts: an Overview with headline stats, a "Duality" section for a direct comparison of Benefits vs. Risks, an "Implementation Playbook" combining use cases, metrics, and skills into an actionable guide, a "Future Vision" section for forward-looking insights like the Future of Work and the core 'Copilot vs. Cothinker' framework, and finally, "Industry Insights" for real-world examples. This non-linear, dashboard-like structure allows users to access information based on interest, which is more engaging than scrolling a long document. Key interactions include tab-based navigation, chart hovers for detail, and content filtering for use cases and industry examples. This design prioritizes user-driven discovery of the report's key messages. -->
     <!-- Visualization & Content Choices: 
-        - Key Metrics (Productivity, Cost Savings): Goal: Inform. Method: Bar Chart (Chart.js) for visual comparison, complemented by prominent text call-outs and an info tooltip for granular data. Interaction: Hover tooltips for precise data, clickable info icon for deeper detail. Justification: More engaging than static numbers, allows for quick comprehension of scale and quick access to further detail.
-        - Benefits vs. Risks: Goal: Compare. Method: Two-column layout with interactive toggles/buttons. Interaction: Clicking a benefit or risk reveals detailed text, including specific numbers and challenges. Justification: Facilitates direct comparison and a balanced, detailed understanding of GenAI's duality. Added specific risk details and Gartner prediction.
-        - Use Cases: Goal: Organize/Explore. Method: Filterable cards (HTML/CSS/JS). Interaction: Clicking category buttons filters the visible use case cards. Use case descriptions are expanded with more detail. Added "General Business Value" filter. Justification: Allows users to focus on functions relevant to them (e.g., Finance, SAP, Change Management, Comms, Training), improving usability and providing more concrete examples.
-        - Org Structure Shift: Goal: Change. Method: A simple visual diagram (HTML/CSS) within the "Future of Work" section. Interaction: Static visual for clarity, supported by text describing human-AI collaboration. Justification: A visual metaphor is more powerful than text alone for explaining the shift from generalist to specialist roles and agile structures.
-        - Essential Skills: Goal: Organize. Method: Two interactive lists (Technical/Soft). Interaction: Clicking a skill card reveals its expanded description with relevant examples. Justification: Breaks down a dense list into digestible, interactive components with practical context.
-        - Co-pilots vs. Co-thinkers: Goal: Inform/Differentiate. Method: Two-column text comparison (HTML/CSS) with explicit labels for comparison points. Interaction: Static comparison. Justification: Clearly distinguishes key AI roles as described by Capgemini, providing crucial context for human-AI interaction with improved clarity and visual distinction.
-        - Strategic Imperatives: Goal: Inform/Guide. Method: Accordion list (HTML/JS). Interaction: Clicking a header expands to show details, including sub-points and expanded concepts like XLAs. Justification: Presents a high-level checklist that users can expand for more information, making the final recommendations actionable and less overwhelming with deeper detail.
+        - Introduction/Market Growth: Goal: Show change. Viz: Line chart (Chart.js) for market growth. Interaction: Tooltips. Justification: Best for time-series data.
+        - Benefits vs. Risks: Goal: Compare. Viz: Bar chart for benefits (quantifiable gains), Doughnut chart for risks (% of orgs concerned). Interaction: Hover tooltips. Justification: Bar charts excel at comparing magnitudes, while doughnut charts are effective for showing parts of a whole. Paired with descriptive text cards, this creates a comprehensive dual view.
+        - Success Metrics: Goal: Inform/Organize. Method: HTML/CSS stat cards with Unicode icons. Interaction: None, purely informational. Justification: Clear, scannable way to present key performance indicators without visual clutter.
+        - Copilot vs. Cothinker: Goal: Explain/Compare core concepts. Method: Structured two-column HTML layout with descriptive text and lists. Interaction: None. Justification: A clear, side-by-side textual and visual comparison is most effective for explaining this conceptual framework.
+        - Cross-Industry Examples: Goal: Organize/Filter. Method: Interactive HTML cards with JS filtering. Interaction: Buttons to filter by industry. Justification: Allows users to easily find relevant examples without information overload.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 40vh; }
-        .nav-link { transition: color 0.3s, border-color 0.3s; }
-        .nav-link.active, .nav-link:hover { color: #0f766e; border-bottom-color: #0f766e; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link.active { color: #2563eb; border-bottom-color: #2563eb; font-weight: 600; }
+        .nav-link:not(.active) { border-bottom-color: transparent; }
         .content-section { display: none; }
         .content-section.active { display: block; }
-        .card-enter { animation: card-enter 0.5s ease-out forwards; }
-        @keyframes card-enter {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .tab-button.active { background-color: #3b82f6; color: white; }
+        .tab-button { transition: all 0.3s ease; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        details {
+            margin-bottom: 0.75rem; /* Equivalent to mb-3 */
+            background-color: #f9fafb; /* Equivalent to bg-gray-50 */
+            border: 1px solid #e2e8f0; /* Equivalent to border border-gray-200 */
+            border-radius: 0.5rem; /* Equivalent to rounded-lg */
+            padding: 1rem; /* Equivalent to p-4 */
+            transition: all 0.2s ease-in-out;
         }
-        .tab-button.active { background-color: #0f766e; color: white; }
-        .filter-button.active { background-color: #0f766e; color: white; border-color: #0f766e; }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
-        .modal-content { background-color: #fefefe; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 80%; max-width: 500px; position: relative; }
-        .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
-        .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
-        .info-icon { cursor: pointer; display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center; border-radius: 50%; background-color: #ddd; color: #555; font-size: 10px; margin-left: 5px; }
-        /* Removed .llm-action-items style as LLM features are removed */
+        details[open] {
+            background-color: #e0f2fe; /* Equivalent to bg-blue-50 */
+            border-color: #93c5fd; /* Equivalent to border-blue-300 */
+        }
+        summary {
+            font-weight: 600; /* Equivalent to font-semibold */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            list-style: none; /* Remove default marker */
+            color: #1f2937; /* Equivalent to text-slate-800 */
+        }
+        summary::-webkit-details-marker {
+            display: none; /* Remove default marker for webkit browsers */
+        }
+        summary::before {
+            content: '►'; /* Custom marker */
+            margin-right: 0.75rem; /* Equivalent to mr-3 */
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+        details p {
+            margin-top: 0.75rem; /* Equivalent to mt-3 */
+            padding-left: 1.5rem; /* To align with summary text */
+            color: #475569; /* Equivalent to text-slate-700 */
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-slate-50 text-slate-800">
 
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <header class="text-center py-12 md:py-16">
-            <h1 class="text-4xl md:text-5xl font-bold text-teal-800">The GenAI Revolution in Change Management</h1>
-            <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">An interactive exploration of how Generative AI is reshaping organizations, based on Capgemini research.</p>
+    <div id="app" class="antialiased">
+        <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+            <nav class="container mx-auto px-4">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Adjusted title for better mobile centering and prominence -->
+                    <h1 class="text-xl sm:text-2xl font-bold text-blue-600 w-full text-center md:w-auto md:text-left">GenAI & Change Management</h1>
+                    <!-- Navigation hidden on small screens, shown on medium and up -->
+                    <div class="hidden md:flex items-center space-x-4">
+                        <a href="#overview" class="nav-link border-b-2 px-2 py-1 text-slate-600 hover:text-blue-600">Overview</a>
+                        <a href="#duality" class="nav-link border-b-2 px-2 py-1 text-slate-600 hover:text-blue-600">Benefits vs. Risks</a>
+                        <a href="#playbook" class="nav-link border-b-2 px-2 py-1 text-slate-600 hover:text-blue-600">Implementation Playbook</a>
+                        <a href="#future" class="nav-link border-b-2 px-2 py-1 text-slate-600 hover:text-blue-600">Future Vision</a>
+                        <a href="#industries" class="nav-link border-b-2 px-2 py-1 text-slate-600 hover:text-blue-600">Industry Insights</a>
+                    </div>
+                </div>
+            </nav>
         </header>
 
-        <nav class="sticky top-0 bg-gray-50/80 backdrop-blur-sm z-10 border-b border-gray-200 mb-12">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex justify-center space-x-4 sm:space-x-8 text-sm sm:text-base font-medium text-gray-500">
-                    <a href="#pulse" class="nav-link py-4 border-b-2 border-transparent">The Pulse</a>
-                    <a href="#opportunity-risk" class="nav-link py-4 border-b-2 border-transparent">Opportunity & Risk</a>
-                    <a href="#in-action" class="nav-link py-4 border-b-2 border-transparent">In Action</a>
-                    <a href="#future-work" class="nav-link py-4 border-b-2 border-transparent">Future of Work</a>
-                    <a href="#copilots-cothinkers" class="nav-link py-4 border-b-2 border-transparent">Co-pilots vs. Co-thinkers</a>
-                    <a href="#roadmap" class="nav-link py-4 border-b-2 border-transparent">Roadmap</a>
-                </div>
-            </div>
-        </nav>
-        
-        <main>
-            <section id="pulse" class="py-12 md:py-16">
+        <main class="container mx-auto p-4 md:p-8">
+            
+            <section id="overview" class="content-section fade-in">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-teal-800">The Pulse: Quantifying the Impact</h2>
-                    <p class="mt-3 max-w-2xl mx-auto text-gray-600">This section provides a high-level dashboard of the key quantifiable benefits organizations are realizing from Generative AI. These metrics highlight the significant gains in efficiency, cost reduction, and engagement, setting the stage for why GenAI has become a strategic imperative.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">The Transformative Impact of GenAI on Organisational Change</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600 mb-6">
+                        Generative Artificial Intelligence (GenAI) is rapidly emerging as a profound catalyst for organisational transformation, moving beyond mere technological enhancement to fundamentally reshape operational paradigms and strategic approaches. This interactive report synthesises recent findings, with an emphasis on Capgemini's research, to explore GenAI's multifaceted impact on change management, from burgeoning market growth to the evolving future of work.
+                    </p>
+                    <details class="bg-white p-6 rounded-lg shadow-md mb-6">
+                        <summary class="text-xl font-semibold text-slate-900">What is Generative AI (GenAI)?</summary>
+                        <p class="text-slate-700 mt-4">
+                            Generative AI refers to artificial intelligence systems capable of creating new content, such as text, images, audio, and video, in response to prompts. Unlike traditional AI that focuses on analysis or prediction, GenAI *generates* novel outputs, making it a powerful tool for innovation, content creation, and problem-solving across various domains.
+                        </p>
+                    </details>
                 </div>
+
                 <div class="grid md:grid-cols-2 gap-8 items-center">
                     <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="font-semibold text-lg mb-4 text-center">Key Performance Gains</h3>
+                        <h3 class="text-xl font-semibold mb-4 text-center">Global AI Market Growth (USD Billions)</h3>
                         <div class="chart-container">
-                            <canvas id="benefitsChart"></canvas>
+                            <canvas id="marketGrowthChart"></canvas>
                         </div>
-                         <p class="text-sm text-gray-500 mt-4 text-center">Managers anticipate gaining up to <span class="font-bold text-teal-600">seven hours weekly</span> by leveraging GenAI.</p>
+                        <p class="text-sm text-slate-500 mt-4 text-center">
+                            Global spending on AI, encompassing software, hardware, and services, reached an estimated $154 billion in 2023, marking a substantial 26.9% increase from the previous year. Projections indicate an escalation to over $300 billion by 2026, driven significantly by the rapid emergence and adoption of GenAI technologies.
+                        </p>
                     </div>
                     <div class="space-y-6">
                         <div class="bg-white p-6 rounded-lg shadow-md">
-                             <h3 class="text-lg font-semibold text-gray-700">Strategic Imperative</h3>
-                            <p class="text-gray-600 mt-2">By 2026, over <span class="text-2xl font-bold text-teal-600">80%</span> of enterprises will use GenAI, a massive leap from less than 5% in 2023.</p>
-                            <p class="text-gray-600 mt-2">Notably, <span class="font-bold text-teal-600">80% of organizations increased their GenAI investment from 2023</span>, with none decreasing it. This rapid adoption signals that GenAI is no longer optional, but essential for staying competitive.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="text-lg font-semibold text-gray-700">Leadership Outlook</h3>
-                            <p class="text-gray-600 mt-2"><span class="text-2xl font-bold text-teal-600">54%</span> of leaders expect GenAI to deliver financial benefits this year, with many anticipating savings over <span class="text-xl font-bold text-teal-600">10%</span>.</p>
-                             <p class="text-sm text-gray-600 mt-2">Productivity improvements can range from 7-18% across the SDLC, and up to 35% for less experienced support agents <span class="info-icon" onclick="showProductivityDetailsModal()">i</span></p>
+                            <h3 class="text-xl font-semibold mb-2">Key Adoption Insights & Strategic Imperative</h3>
+                            <p class="text-slate-600 mb-4">
+                                Adoption is accelerating across all organisational functions, but a critical gap remains between high-level strategic discussions and practical, daily executive application. GenAI is seen as a primary lever for reinvention, influencing boardrooms globally. Explore the key insights below:
+                            </p>
+                            <div class="space-y-4">
+                                <details class="mb-3 bg-white">
+                                    <summary>
+                                        <span class="text-3xl font-bold text-blue-600 mr-4">4x</span>
+                                        <span class="text-base sm:text-lg text-slate-700 font-semibold">Increase in GenAI deployment over the last 12 months.</span>
+                                    </summary>
+                                    <p class="text-base text-slate-700 mt-2 pl-12">
+                                        Nearly a quarter (24%) of organisations are now integrating GenAI into some or most of their operations, a significant acceleration from just 6% reported 12 months prior. This highlights the rapid pace of adoption across all functions.
+                                    </p>
+                                </details>
+                                <details class="mb-3 bg-white">
+                                    <summary>
+                                        <span class="text-3xl font-bold text-blue-600 mr-4">96%</span>
+                                        <span class="text-base sm:text-lg text-slate-700 font-semibold">Of boardrooms globally are discussing GenAI.</span>
+                                    </summary>
+                                    <p class="text-base text-slate-700 mt-2 pl-12">
+                                        This makes GenAI a top strategic priority, recognising its potential to drive growth, enhance productivity, and foster agility. This widespread discussion signals a fundamental shift in strategic outlook.
+                                    </p>
+                                </details>
+                                 <details class="mb-3 bg-white">
+                                    <summary>
+                                        <span class="text-3xl font-bold text-red-500 mr-4">&lt;10%</span>
+                                        <span class="text-base sm:text-lg text-slate-700 font-semibold">Of executives use GenAI tools in their daily tasks.</span>
+                                    </summary>
+                                    <p class="text-base text-slate-700 mt-2 pl-12">
+                                        This significant disconnect between strategic intent and day-to-day practical adoption highlights a critical challenge for change management. Bridging this gap requires leaders to articulate a clear "why" for GenAI.
+                                    </p>
+                                </details>
+                            </div>
+                            <p class="text-sm text-slate-500 mt-4">
+                                Early adopters are already realising tangible benefits, with reports indicating improvements in efficiency (78%), faster response times (56%), and enhanced decision-making capabilities (55%). However, bridging the executive-to-employee adoption gap requires leaders to communicate a compelling vision of the organisation with AI deeply embedded in its daily operations.
+                            </p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <div id="productivityDetailsModal" class="modal">
-                <div class="modal-content">
-                    <span class="close-button" onclick="closeProductivityDetailsModal()">&times;</span>
-                    <h3 class="text-xl font-bold mb-4">Detailed Productivity Improvements</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2">
-                        <li>Average productivity improvement for early adopters: <span class="font-bold text-teal-600">7.8%</span></li>
-                        <li>Up to <span class="font-bold text-teal-600">25%</span> boost in specific areas.</li>
-                        <li>Less experienced support agents: Up to <span class="font-bold text-teal-600">35%</span> improvement.</li>
-                        <li>Software Development Lifecycle (SDLC): <span class="font-bold text-teal-600">7-18%</span> improvement, with some studies indicating up to <span class="font-bold text-teal-600">40%</span>.</li>
-                    </ul>
+            <section id="duality" class="content-section fade-in">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">The Duality of GenAI: A Balancing Act</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600">
+                       Successfully adopting Generative AI requires navigating a landscape of immense opportunity and significant risk. This section provides a comparative view of the key benefits driving adoption against the critical challenges and risks that demand robust governance and careful change management.
+                    </p>
                 </div>
-            </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold text-green-600 mb-4 text-center">Key Benefits</h3>
+                        <p class="text-slate-700 mb-4 text-center">GenAI drives significant improvements across operational efficiency, customer experience, innovation, and cost management. Click on each benefit to learn more.</p>
+                        <div class="chart-container" style="height: 250px; max-height: 250px;">
+                            <canvas id="benefitsChart"></canvas>
+                        </div>
+                        <div class="mt-6 space-y-4 text-slate-700">
+                            <details class="mb-3 bg-white">
+                                <summary>Operational Efficiency & Productivity</summary>
+                                <p>Automates routine tasks, freeing employees for strategic work. Managers can save up to 7 hours per week, with average productivity increases of 7.8% and up to 25% in specific areas. Programmers see 55% faster overall.</p>
+                            </details>
+                            <details class="mb-3 bg-white">
+                                <summary>Cost Optimisation</summary>
+                                <p>Reduces costs of large-scale transformations (e.g., 15-20% for SAP) and enhances precision of financial analysis. 54% of leaders expect &gt;10% savings. Potential for 15.7% cost savings within 18 months, with some firms seeing 12-18% operational savings in a year.</p>
+                            </details>
+                            <details class="mb-3 bg-white">
+                                <summary>Enhanced Experiences</summary>
+                                <p>Enables hyper-personalisation for customers (6.7% engagement improvement) and improves employee satisfaction by reducing monotonous work. 74% of organisations expect GenAI to drive revenue and innovation.</p>
+                            </details>
+                            <details class="mb-3 bg-white">
+                                <summary>The Value Loop</summary>
+                                <p>GenAI creates a powerful, positive feedback loop: 1. Automates tasks. 2. Boosts efficiency. 3. Frees human talent. 4. Enhances well-being. 5. Drives innovation.</p>
+                            </details>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold text-red-600 mb-4 text-center">Top Risks & Challenges</h3>
+                        <p class="text-slate-700 mb-4 text-center">Successfully navigating GenAI adoption requires proactively addressing data, ethical, workforce, and implementation challenges. Click on each risk to learn more.</p>
+                        <div class="chart-container" style="height: 250px; max-height: 250px;">
+                            <canvas id="risksChart"></canvas>
+                        </div>
+                         <div class="mt-6 space-y-4 text-slate-700">
+                             <details class="mb-3 bg-white">
+                                <summary>The Governance Gap</summary>
+                                <p>A critical challenge is that enthusiasm is outpacing governance. 61% lack a formal governance framework. 63% of professionals use unauthorised GenAI tools, risking hallucinated code, data leakage, and IP issues. Uncontrolled use exposes firms to data leaks, IP issues, and flawed "hallucinated" outputs, potentially negating the benefits.</p>
+                            </details>
+                            <details class="mb-3 bg-white">
+                                <summary>Data Security & Privacy</summary>
+                                <p>Risk of confidential data exposure, violations of training data subjects' privacy/consent, model corruption, and ethical/regulatory responsibilities. Continuous verification is needed for outputs to detect hallucinations or drifts. 75% view cybersecurity risks as a barrier.</p>
+                            </details>
+                            <details class="mb-3 bg-white">
+                                <summary>Integration & Skill Gaps</summary>
+                                <p>Integrating AI securely into processes is complex. Only 40% of software professionals receive adequate GenAI training, leading to inconsistent quality and vulnerabilities. 70% of organisations are hindered by a limited supply of data and AI talent.</p>
+                            </details>
+                            <details class="mb-3 bg-white">
+                                <summary>Resistance to Change</summary>
+                                <p>Workforce wariness, established habits, and fear of irrelevance can hinder adoption. Gartner predicts 70% of GenAI Proof-of-Concepts (POCs) will be abandoned through 2025 due to these challenges.</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            <section id="opportunity-risk" class="py-12 md:py-16 bg-white rounded-lg shadow-lg">
+            <section id="playbook" class="content-section fade-in">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-teal-800">The Dichotomy: Opportunity & Risk</h2>
-                     <p class="mt-3 max-w-3xl mx-auto text-gray-600">Successfully implementing GenAI requires a balanced perspective. This section allows you to explore the transformative opportunities it presents alongside the significant risks and challenges that must be managed. Use the tabs to switch between the two viewpoints to understand the full picture of GenAI adoption.</p>
-                    <div class="mt-6 flex justify-center">
-                        <div class="bg-gray-100 p-1 rounded-lg flex space-x-1">
-                            <button id="opp-tab" class="tab-button px-4 py-2 text-sm font-medium rounded-md w-32">Opportunity</button>
-                            <button id="risk-tab" class="tab-button px-4 py-2 text-sm font-medium rounded-md w-32">Risk</button>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">The Implementation Playbook</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600">
+                        Effective GenAI integration requires a clear strategy. This section provides an actionable playbook covering high-impact use cases, essential skills to cultivate, and key metrics to measure success, helping you translate strategy into practice.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="mb-6 border-b border-slate-200">
+                         <div class="flex flex-wrap -mb-px">
+                            <button class="tab-button mr-2 inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-tab="use-cases">Use Cases</button>
+                            <button class="tab-button mr-2 inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-tab="skills">Essential Skills</button>
+                            <button class="tab-button mr-2 inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" data-tab="metrics">Success Metrics</button>
                         </div>
                     </div>
-                </div>
-
-                <div id="opportunity-content" class="content-section grid md:grid-cols-2 gap-8 px-4 md:px-8">
-                    <div class="space-y-4">
-                        <h3 class="text-2xl font-semibold text-teal-700">Key Benefits</h3>
-                        <div class="p-4 bg-teal-50 rounded-lg">
-                            <h4 class="font-semibold">Operational Efficiency & Productivity</h4>
-                            <p class="text-sm text-gray-600">Automates routine tasks, freeing human resources for strategic work. Managers can save up to 7 hours per week, with average productivity increases of 7.8% and up to 25% in specific areas.</p>
-                        </div>
-                        <div class="p-4 bg-teal-50 rounded-lg">
-                            <h4 class="font-semibold">Cost Optimization</h4>
-                            <p class="text-sm text-gray-600">Reduces costs of large-scale transformations (e.g., 15-20% for SAP) and enhances precision of financial analysis. 54% of leaders expect >10% savings.</p>
-                        </div>
-                        <div class="p-4 bg-teal-50 rounded-lg">
-                            <h4 class="font-semibold">Enhanced Experiences</h4>
-                            <p class="text-sm text-gray-600">Enables hyper-personalization for customers (6.7% engagement improvement) and improves employee satisfaction by reducing monotonous work.</p>
-                        </div>
-                        <div class="p-4 bg-teal-50 rounded-lg">
-                            <h4 class="font-semibold">Evolving Success Metrics: Beyond Efficiency</h4>
-                            <p class="text-sm text-gray-600">Success now encompasses "Developer Thriving," "Satisfaction and Well-being," and "Innovation," moving beyond pure efficiency to holistic value and human-centric outcomes. Employee satisfaction is a key benefit, and Experience Level Agreements (XLAs) are becoming more important.</p>
-                        </div>
-                    </div>
-                    <div class="p-6 bg-gray-100 rounded-lg">
-                         <h3 class="text-xl font-semibold text-gray-800">The Value Loop</h3>
-                         <p class="mt-2 text-gray-600">GenAI creates a powerful, positive feedback loop. The process is a virtuous cycle: </p>
-                        <ol class="mt-4 space-y-3 list-decimal list-inside text-gray-600">
-                            <li><span class="font-semibold">Automate Tasks:</span> AI handles routine, repetitive work.</li>
-                            <li><span class="font-semibold">Boost Efficiency:</span> This leads to direct productivity gains and cost savings.</li>
-                            <li><span class="font-semibold">Free Human Talent:</span> Employees shift to strategic, creative, and high-value work.</li>
-                            <li><span class="font-semibold">Enhance Well-being:</span> Job satisfaction and engagement improve.</li>
-                            <li><span class="font-semibold">Drive Innovation:</span> A more strategic and engaged workforce fuels innovation and competitive advantage.</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <div id="risk-content" class="content-section grid md:grid-cols-2 gap-8 px-4 md:px-8">
-                     <div class="p-6 bg-red-50 rounded-lg">
-                        <h3 class="text-xl font-semibold text-red-800">The Governance Gap</h3>
-                         <p class="mt-2 text-red-700">A critical challenge is that enthusiasm is outpacing governance. This creates significant vulnerabilities.</p>
-                         <ul class="mt-4 space-y-3 list-disc list-inside text-red-700">
-                             <li><span class="font-semibold">Unauthorized Tools:</span> <span class="font-bold text-xl">63%</span> of professionals use unapproved GenAI tools, risking hallucinated code, data leakage, and IP issues.</li>
-                             <li><span class="font-semibold">No Framework:</span> <span class="font-bold text-xl">61%</span> of organizations lack a formal governance framework for GenAI.</li>
-                            <li><span class="font-semibold">The Result:</span> This uncontrolled use exposes firms to data leaks, IP issues, and flawed "hallucinated" outputs, potentially negating the benefits.</li>
-                         </ul>
-                    </div>
-                    <div class="space-y-4">
-                        <h3 class="text-2xl font-semibold text-red-700">Key Challenges</h3>
-                        <div class="p-4 bg-red-50 rounded-lg">
-                            <h4 class="font-semibold">Data Security & Privacy</h4>
-                            <p class="text-sm text-gray-600">Risk of confidential data exposure, violations of training data subjects' privacy/consent, model corruption, and ethical/regulatory responsibilities. Continuous verification is needed for outputs to detect hallucinations or drifts.</p>
-                        </div>
-                        <div class="p-4 bg-red-50 rounded-lg">
-                            <h4 class="font-semibold">Integration & Skill Gaps</h4>
-                            <p class="text-sm text-gray-600">Integrating AI into legacy processes is complex. Only 40% of software professionals receive adequate GenAI training, leading to inconsistent quality and vulnerabilities.</p>
-                        </div>
-                        <div class="p-4 bg-red-50 rounded-lg">
-                            <h4 class="font-semibold">Resistance to Change</h4>
-                            <p class="text-sm text-gray-600">Workforce wariness, established habits, and fear of irrelevance can hinder adoption. Gartner predicts <span class="font-bold">30% of GenAI Proof-of-Concepts (POCs) will be abandoned</span> through 2025 due to these challenges.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="in-action" class="py-12 md:py-16">
-                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-teal-800">GenAI in Action: Real-World Use Cases</h2>
-                    <p class="mt-3 max-w-3xl mx-auto text-gray-600">This section demonstrates how GenAI is being applied across different business functions to drive tangible value. Use the filters to explore use cases relevant to your area of interest. This showcases a shift from isolated experiments to integrated transformations that optimize entire value chains.</p>
-                    <div class="mt-6 flex justify-center flex-wrap gap-2">
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="all">All</button>
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="esm">ESM</button>
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="sap">SAP</button>
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="finance">Finance</button>
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="dev">Software Eng.</button>
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="change_mgmt">Change Mgt & Analysis</button>
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="training">Training & Dev</button>
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="comms">Communications</button>
-                        <button class="filter-button px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white" data-filter="general_biz">General Business Value</button>
-                    </div>
-                </div>
-                <div id="use-case-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                </div>
-            </section>
-
-            <section id="future-work" class="py-12 md:py-16 bg-white rounded-lg shadow-lg">
-                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-teal-800">The Future of Work: People & Skills</h2>
-                    <p class="mt-3 max-w-3xl mx-auto text-gray-600">GenAI's greatest impact is on people. It's not about replacing humans, but augmenting their capabilities. This section explores the evolving nature of roles, the shift in organizational design, and the essential skills required to thrive in a GenAI-augmented workplace.</p>
-                </div>
-                <div class="grid lg:grid-cols-2 gap-8 items-start">
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-6 text-center text-teal-700">Shifting Roles & Structures</h3>
-                        <div class="bg-gray-100 p-6 rounded-lg">
-                            <h4 class="font-semibold text-lg text-center">From Generalist to Specialist</h4>
-                            <p class="text-center text-gray-600 text-sm mt-2">GenAI handles broad tasks, allowing managers to deepen their expertise. Only 18% of leaders expect GenAI to reduce middle management roles, while 51% expect a shift to specialist roles.</p>
-                            <div class="flex justify-around items-center mt-6 text-center">
-                                <div class="w-1/3">
-                                    <div class="text-3xl">🧑‍💼</div>
-                                    <p class="font-semibold mt-1">Generalist Manager</p>
-                                </div>
-                                <div class="w-1/3 text-4xl text-teal-500 font-light">&rarr;</div>
-                                <div class="w-1/3">
-                                    <div class="text-3xl">👩‍🔬</div>
-                                    <p class="font-semibold mt-1">Specialist Leader</p>
-                                </div>
+                    
+                    <div id="use-cases" class="tab-content">
+                        <h3 class="text-xl font-semibold mb-4 text-slate-900">Change Management Use Cases</h3>
+                        <p class="text-slate-700 mb-6">GenAI is fundamentally reshaping change management by enabling more precise, personalised, and proactive strategies across key functions. Click on each item to learn more.</p>
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="border border-slate-200 p-4 rounded-lg bg-slate-50">
+                                <h4 class="font-bold text-lg mb-4 text-blue-700">⚙️ Core Change Processes</h4>
+                                <details class="mb-3">
+                                    <summary>Sentiment Analysis & Stakeholder Monitoring</summary>
+                                    <p>Analyse internal communications and feedback (e.g., surveys, collaboration tools) to detect early signals of resistance, confusion, or disengagement. This allows for proactive interventions and tailored support.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Change Impact Assessment & Risk Prediction</summary>
+                                    <p>Leverage historical change data to predict areas most likely to encounter difficulties during new transformations. Proactively allocate resources and prepare tailored support where it is most needed.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Automated Feedback Collection & Analysis</summary>
+                                    <p>Continuously monitor change progress through real-time data from various channels. Identify patterns in adoption rates, pinpoint recurring issues, and provide measurable insights for continuous improvement.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Scenario Planning & Modelling</summary>
+                                    <p>Simulate different change implementation strategies and their potential outcomes, including impacts on employee morale, productivity, and project timelines, to optimise planning.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Knowledge Management & Search</summary>
+                                    <p>Create intelligent internal systems where employees can quickly find relevant information on new processes, policies, and changes through natural language queries, reducing friction and confusion.</p>
+                                </details>
+                            </div>
+                            <div class="border border-slate-200 p-4 rounded-lg bg-slate-50">
+                                <h4 class="font-bold text-lg mb-4 text-blue-700">📚 Training & Development</h4>
+                                <details class="mb-3">
+                                    <summary>Personalised Learning Paths & Adaptive Training Modules</summary>
+                                    <p>Generate dynamic, tailored training content and learning journeys based on individual roles, skill levels, learning styles, and specific organisational change needs.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Automated Content Creation</summary>
+                                    <p>Rapidly produce diverse training materials, including realistic video scenarios, interactive simulations, product walk-throughs, and onboarding sequences, reducing development time and cost.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Skill Gap Identification & Targeted Upskilling</summary>
+                                    <p>Analyse workforce data to pinpoint specific skill gaps arising from change initiatives and automatically recommend highly relevant, personalised learning interventions to close those gaps.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Leadership Coaching Simulations</summary>
+                                    <p>Provide adaptive and realistic environments for leaders to practise decision-making, communication, and empathy skills, with real-time AI-powered feedback for continuous improvement.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>On-Demand Microlearning</summary>
+                                    <p>Deliver bite-sized, context-aware learning modules precisely when an employee needs to acquire a new skill or understand a new process related to a specific change.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Virtual Mentors/Coaches</summary>
+                                    <p>AI-powered assistants offering instant guidance, answering specific questions, and providing ongoing feedback during learning journeys or new role transitions.</p>
+                                </details>
+                            </div>
+                            <div class="border border-slate-200 p-4 rounded-lg bg-slate-50">
+                                <h4 class="font-bold text-lg mb-4 text-blue-700">💬 Communications</h4>
+                                <details class="mb-3">
+                                    <summary>Tailored Internal Messaging</summary>
+                                    <p>Craft highly personalised and segmented communications adapted to specific audience groups (e.g., executives, frontline staff, specific departments), ensuring messages resonate effectively based on their context and concerns.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>AI-Powered FAQ Chatbots & Virtual Assistants</summary>
+                                    <p>Deploy 24/7 AI-powered chatbots that provide instant, accurate answers to common questions about change initiatives, new policies, or tool usage, reducing the burden on HR and change teams.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Change Narrative & Content Generation</summary>
+                                    <p>Assist in drafting consistent and compelling change narratives, updates, and announcements across various platforms (e.g., email, intranet posts, presentation scripts, video outlines).</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Audience Insights via AI Personas</summary>
+                                    <p>Create AI-driven personas based on employee data and feedback to test messaging and anticipate different groups' reactions to communications, allowing for proactive adjustments.</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Multi-Channel Content Adaptation</summary>
+                                    <p>Automatically reformat and optimise change communications content for different channels (e.g., converting a long-form email into a concise intranet snippet or a video script).</p>
+                                </details>
+                                <details class="mb-3">
+                                    <summary>Crisis Communication Simulation & Response</summary>
+                                    <p>Practise and refine crisis communication plans by using AI to simulate stakeholder reactions, media responses, and potential public sentiment, ensuring preparedness for unforeseen challenges.</p>
+                                </details>
                             </div>
                         </div>
-                        <div class="bg-gray-100 p-6 rounded-lg mt-6">
-                            <h4 class="font-semibold text-lg">Human-AI Collaboration is the New Norm</h4>
-                            <p class="text-gray-600 mt-2">The future isn't man vs. machine, but man *with* machine. GenAI acts as a "co-thinker" and "sparring partner," handling routine work and freeing humans to focus on tasks requiring uniquely human skills:
-                            <span class="font-semibold text-teal-700">creativity, strategic oversight, and emotional intelligence.</span> GenAI is expected to facilitate approximately one-third of entry-level tasks, which leaders believe will accelerate career progression.</p>
-                            <p class="text-gray-600 mt-4">Organizational structures will become flatter, more agile, and inherently collaborative to adapt to this dynamic environment.</p>
+                    </div>
+                    
+                    <div id="skills" class="tab-content" style="display:none;">
+                         <h3 class="text-xl font-semibold mb-4 text-slate-900">Essential Skills for the GenAI Era</h3>
+                         <p class="text-slate-700 mb-6">Successful adoption requires a strategic focus on developing both technical and human-centric skills across the workforce. These capabilities are crucial for effective human-AI collaboration and navigating continuous change. Click on each skill category to explore key competencies.</p>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                             <details>
+                                <summary>💻 Technical/AI Interaction</summary>
+                                <p class="text-slate-700 mb-2">These are the fundamental skills for interacting directly with AI tools and understanding their operational nuances.</p>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1 pl-4">
+                                    <li><strong class="font-semibold">AI Literacy:</strong> Basic understanding of AI capabilities, limitations, underlying principles, and ethical implications.</li>
+                                    <li><strong class="font-semibold">Prompt Engineering:</strong> Ability to craft effective, clear, and precise prompts to elicit desired, high-quality outputs from Generative AI models.</li>
+                                    <li><strong class="font-semibold">AI Model Interpretation:</strong> Capacity to understand how AI models arrive at conclusions, identify potential biases, and interpret complex outputs in a business context.</li>
+                                    <li><strong class="font-semibold">AI Supervision:</strong> The skill of overseeing and validating AI-generated content or decisions, ensuring accuracy, relevance, and alignment with organisational goals and values.</li>
+                                </ul>
+                            </details>
+                             <details>
+                                <summary>🧠 Critical Thinking & Judgment</summary>
+                                <p class="text-slate-700 mb-2">Essential for evaluating AI outputs, mitigating risks, and making informed, ethical decisions that go beyond what AI can provide.</p>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1 pl-4">
+                                    <li><strong class="font-semibold">Evaluation of AI Output:</strong> Critically assess the accuracy, relevance, completeness, and potential biases of AI-generated content or insights.</li>
+                                    <li><strong class="font-semibold">Ethical Reasoning:</strong> Identify and navigate complex ethical dilemmas related to AI use, ensuring fairness, accountability, transparency, and data privacy.</li>
+                                    <li><strong class="font-semibold">Challenging Assumptions:</strong> The ability to question both human and AI-generated assumptions to uncover deeper insights, explore alternative perspectives, and prevent "groupthink."</li>
+                                    <li><strong class="font-semibold">Complex Problem-Solving:</strong> Utilise AI as a sophisticated tool to explore multifaceted problems, formulate hypotheses, analyse scenarios, and identify innovative solutions beyond automated suggestions.</li>
+                                </ul>
+                            </details>
+                             <details>
+                                <summary>🤝 Human-AI Collaboration & Interpersonal</summary>
+                                <p class="text-slate-700 mb-2">Skills for effectively working alongside AI systems and managing the human dynamics of AI integration within teams and the wider organisation.</p>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1 pl-4">
+                                    <li><strong class="font-semibold">Human-AI Teaming:</strong> Seamlessly integrate AI tools into workflows, understanding when and how to leverage AI to maximise efficiency and effectiveness, and when human intervention is critical.</li>
+                                    <li><strong class="font-semibold">Emotional Intelligence:</strong> Understanding and managing one's own emotions and those of others, crucial for leading change, fostering adoption, and addressing anxieties related to AI.</li>
+                                    <li><strong class="font-semibold">Clear Communication:</strong> Effectively articulate AI's role, benefits, limitations, and challenges to diverse audiences within the organisation, building understanding and buy-in.</li>
+                                    <li><strong class="font-semibold">Fostering Trust:</strong> Build confidence in AI systems by ensuring transparency in their operation, demonstrating their reliability, and proactively addressing concerns and misconceptions among employees.</li>
+                                </ul>
+                            </details>
+                             <details>
+                                <summary>🌱 Adaptability & Strategic Mindset</summary>
+                                <p class="text-slate-700 mb-2">Crucial for navigating continuous technological change, preparing for evolving roles, and ensuring long-term organisational competitiveness.</p>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1 pl-4">
+                                    <li><strong class="font-semibold">Continuous Learning:</strong> Embrace a mindset of lifelong learning and curiosity to keep pace with rapidly evolving AI technologies, applications, and their implications for work.</li>
+                                    <li><strong class="font-semibold">Resilience to Change:</strong> Develop the capacity to adapt quickly to new work processes, tools, and redesigned roles without experiencing significant stress or burnout.</li>
+                                    <li><strong class="font-semibold">Data-Driven Planning:</strong> Utilise AI-generated insights and advanced analytics to inform strategic workforce planning, organisational design decisions, and future talent development initiatives.</li>
+                                    <li><strong class="font-semibold">Visionary Leadership:</strong> The ability to envision, articulate, and champion how GenAI integrates into the broader organisational strategy, fostering a forward-looking culture.</li>
+                                </ul>
+                            </details>
                         </div>
                     </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-6 text-center text-teal-700">Essential Skills for the GenAI Era</h3>
-                        <div id="skills-container" class="space-y-4">
+                    
+                    <div id="metrics" class="tab-content" style="display:none;">
+                        <h3 class="text-xl font-semibold mb-4 text-slate-900">Measuring Success</h3>
+                        <p class="text-slate-700 mb-6">A holistic measurement framework is key. Track a blend of operational, productivity, human-centric, and strategic metrics to capture the full value of GenAI initiatives in change management. Click on each category to see specific metrics.</p>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <details>
+                                <summary>⏱️ Operational Efficiency & Cost</summary>
+                                <p class="text-slate-700 mb-2">Quantifying the direct time and resource savings, along with improvements in process execution.</p>
+                                <ul class="list-disc list-inside text-slate-600 text-sm space-y-1 pl-4">
+                                    <li><strong class="font-semibold">Task Completion Time Reduction:</strong> e.g., Time saved on report generation, content drafting, or data analysis using AI tools.</li>
+                                    <li><strong class="font-semibold">Operational Cost Reduction:</strong> Reduced spend on manual labour, outsourced services, or re-work due to AI automation.</li>
+                                    <li><strong class="font-semibold">Error Rate Decrease:</strong> Reduction in human-generated errors in processes augmented or automated by AI.</li>
+                                    <li><strong class="font-semibold">Process Cycle Time Acceleration:</strong> Speed-up in end-to-end process execution from initiation to completion.</li>
+                                    <li><strong class="font-semibold">Resource Utilisation Improvement:</strong> Enhanced efficiency in the use of human and technological resources.</li>
+                                </ul>
+                            </details>
+                            <details>
+                                <summary>🚀 Productivity & Innovation</summary>
+                                <p class="text-slate-700 mb-2">Measuring enhanced output, creative capacity, and acceleration of development cycles.</p>
+                                <ul class="list-disc list-inside text-slate-600 text-sm space-y-1 pl-4">
+                                    <li><strong class="font-semibold">Output Volume Increase:</strong> Higher quantity of generated content, code, designs, or analyses per unit of time.</li>
+                                    <li><strong class="font-semibold">Output Quality Improvement:</strong> Enhanced quality scores, relevance, or effectiveness of AI-augmented work products.</li>
+                                    <li><strong class="font-semibold">Idea Generation Rate:</strong> Number of new concepts, solutions, or strategic options generated with AI assistance.</li>
+                                    <li><strong class="font-semibold">Time-to-Market Reduction:</strong> Decreased time for new product/service development or deployment cycles due to AI acceleration.</li>
+                                    <li><strong class="font-semibold">Engagement with AI Tools for Creative Tasks:</strong> Frequency and depth of AI tool utilisation for brainstorming, design, or strategic planning.</li>
+                                </ul>
+                            </details>
+                            <details>
+                                <summary>❤️ Human-Centric & Adoption</summary>
+                                <p class="text-slate-700 mb-2">Assessing user acceptance, engagement, and the qualitative impact on workforce and customers, ensuring a human-first approach.</p>
+                                <ul class="list-disc list-inside text-slate-600 text-sm space-y-1 pl-4">
+                                    <li><strong class="font-semibold">Employee Satisfaction & Morale:</strong> Survey scores related to AI tool usability, perceived benefits, and overall impact on workload and job satisfaction.</li>
+                                    <li><strong class="font-semibold">AI Adoption Rate:</strong> Percentage of target users actively and consistently utilising GenAI tools and features.</li>
+                                    <li><strong class="font-semibold">Training Completion & Effectiveness:</strong> Participation rates in GenAI training programmes and demonstrated post-training competency levels.</li>
+                                    <li><strong class="font-semibold">Feedback Sentiment Analysis:</strong> Analysis of qualitative employee feedback on GenAI tools and change initiatives to gauge acceptance and areas for improvement.</li>
+                                    <li><strong class="font-semibold">Customer Satisfaction (CSAT/NPS):</strong> Improvements in customer experience metrics linked to AI-powered interactions (e.g., chatbots, personalised recommendations).</li>
+                                </ul>
+                            </details>
+                            <details>
+                                <summary>📈 Strategic Business Value</summary>
+                                <p class="text-slate-700 mb-2">Linking GenAI initiatives directly to top-line growth, competitive advantage, and overall long-term organisational health.</p>
+                                <ul class="list-disc list-inside text-slate-600 text-sm space-y-1 pl-4">
+                                    <li><strong class="font-semibold">Revenue Growth:</strong> Direct or indirect contribution to increased sales, improved customer retention, or enhanced lead generation due to AI applications.</li>
+                                    <li><strong class="font-semibold">Customer Churn Reduction:</strong> Lower customer attrition rates resulting from improved services or personalised experiences powered by AI.</li>
+                                    <li><strong class="font-semibold">Return on Investment (ROI):</strong> Financial benefit achieved relative to the total cost of GenAI implementation and ongoing operations.</li>
+                                    <li><strong class="font-semibold">Market Share Expansion:</strong> Impact on competitive positioning and market penetration due to new capabilities or enhanced agility driven by AI.</li>
+                                    <li><strong class="font-semibold">Innovation Pipeline Growth:</strong> Increase in the number of new products, services, or business models developed with AI assistance.</li>
+                                </ul>
+                            </details>
                         </div>
                     </div>
                 </div>
             </section>
-
-            <section id="copilots-cothinkers" class="py-12 md:py-16">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-teal-800">Co-pilots vs. Co-thinkers: The Evolution of AI Assistance</h2>
-                    <p class="mt-3 max-w-3xl mx-auto text-gray-600">Capgemini's research highlights a crucial distinction in how Generative AI can augment human capabilities, moving beyond simple task assistance to true strategic partnership. Understanding this spectrum is key to leveraging GenAI effectively.</p>
-                </div>
-                <div class="grid md:grid-cols-2 gap-8 px-4 md:px-8">
-                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-teal-600">
-                        <h3 class="text-2xl font-semibold text-teal-700 mb-4">The Co-pilot</h3>
-                        <p class="text-gray-700">A "co-pilot" AI is designed to assist humans with <strong>routine, predefined, and automated tasks</strong>. Its primary role is to enhance <strong>efficiency and productivity</strong> by taking over repetitive work. Think of it as a highly skilled assistant that executes specific instructions and handles data processing, content generation (e.g., initial drafts of emails, summaries), and basic problem-solving based on established rules.</p>
-                        <ul class="mt-4 list-disc list-inside text-gray-600 space-y-2">
-                            <li><span class="font-bold text-gray-800">Focus:</span> Task automation, efficiency, execution.</li>
-                            <li><span class="font-bold text-gray-800">Benefit:</span> Frees human time from mundane work.</li>
-                            <li><span class="font-bold text-gray-800">Example:</span> Generating boilerplate code, automating ticket creation, summarizing long documents.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-600">
-                        <h3 class="text-2xl font-semibold text-orange-700 mb-4">The Co-thinker</h3>
-                        <p class="text-gray-700">A "co-thinker" AI goes beyond mere assistance, acting as a <strong>strategic partner and sparring partner</strong>. It aids in <strong>complex problem-solving, strategic planning, and decision-making</strong> by synthesizing information, offering fresh perspectives, and challenging assumptions. This type of AI leverages advanced reasoning to engage in more human-like intellectual collaboration, enhancing the manager's cognitive load and creative output.</p>
-                        <ul class="mt-4 list-disc list-inside text-gray-600 space-y-2">
-                            <li><span class="font-bold text-gray-800">Focus:</span> Strategic thinking, problem-solving, innovation, decision support.</li>
-                            <li><span class="font-bold text-gray-800">Benefit:</span> Augments human creativity and strategic oversight.</li>
-                            <li><span class="font-bold text-gray-800">Example:</span> Aiding in risk evaluation, synthesizing market trends for strategic planning, providing diverse perspectives for complex challenges.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <section id="roadmap" class="py-12 md:py-16">
+            
+            <section id="future" class="content-section fade-in">
                  <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-teal-800">Your Strategic Roadmap</h2>
-                    <p class="mt-3 max-w-3xl mx-auto text-gray-600">Successfully navigating GenAI-driven change requires a clear, integrated strategy. This section outlines the key imperatives for leaders. Think of this as an actionable checklist to unlock the full potential of GenAI, empower your people, and secure a competitive advantage.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Future Vision: Work, Roles, and Strategy</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600">
+                        GenAI is reshaping the very fabric of work. This section explores the future of organisational design and introduces Capgemini's pivotal framework for leveraging AI: the shift from a simple "Copilot" to a strategic "Cothinker."
+                    </p>
                 </div>
-                <div id="roadmap-accordion" class="max-w-4xl mx-auto space-y-4">
+
+                <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">The Future of Work: People & Skills</h3>
+                    <p class="text-slate-600 mb-4">GenAI's greatest impact is on people. It's not about replacing humans, but augmenting their capabilities. This necessitates a strategic focus on evolving roles, organisational design, and the essential skills required to thrive in a GenAI-augmented workplace.</p>
+                    
+                    <div class="space-y-4 mb-8">
+                        <details class="bg-slate-100">
+                            <summary class="text-slate-800 text-center">Shifting Roles & Structures</summary>
+                            <div class="p-4 bg-white rounded-lg border border-slate-200 mt-2 text-center">
+                                <h5 class="font-semibold text-lg mb-2 text-blue-700">From Generalist to Specialist</h5>
+                                <div class="flex items-center justify-center space-x-4">
+                                    <span class="text-slate-700">🧑‍💼 Generalist Manager</span>
+                                    <span class="text-blue-500 font-bold text-xl">→</span>
+                                    <span class="text-slate-700">👩‍🔬 Specialist Leader</span>
+                                </div>
+                                <p class="text-slate-600 mt-2">GenAI handles broad tasks, allowing managers to deepen their expertise. Only 18% of leaders expect GenAI to reduce middle management roles, while 51% expect it to shift to specialist roles.</p>
+                            </div>
+                        </details>
+                        <details class="bg-slate-100">
+                            <summary class="text-slate-800 text-center">Human-AI Collaboration is the New Norm</summary>
+                            <p class="mt-2 text-slate-600 text-center">The future isn't man vs. machine, but man "with" machine. GenAI acts as a "co-thinker" and "spartner" partner, handling routine work and freeing humans to focus on tasks that demand creativity, critical thinking, strategic insight, and emotional intelligence. GenAI is expected to facilitate approximately one-third of entry-level tasks, which leaders believe will accelerate career progression. Organisational structures will become flatter, more agile, and inherently collaborative to adapt to this dynamic environment.</p>
+                        </details>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold mb-4">Essential Skills for the GenAI Era</h3>
+                    <p class="text-slate-600 mb-4">Understanding how AI models function to accurately interpret their outputs and limitations is crucial for validating GenAI-generated analysis or recommendations in change management.</p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-bold text-xl mb-3 text-blue-700">Technical Skills</h4>
+                            <details class="mb-3 bg-slate-100">
+                                <summary>Prompt Engineering</summary>
+                                <p>The critical skill of crafting effective inputs to guide AI models toward desired outputs, e.g., to generate specific change communication messages or training module outlines.</p>
+                            </details>
+                            <details class="mb-3 bg-slate-100">
+                                <summary>AI Model Interpretation</summary>
+                                <p>Understanding how AI models function to accurately interpret their outputs and limitations is crucial for validating GenAI-generated analysis or recommendations in change management.</p>
+                            </details>
+                            <details class="mb-3 bg-slate-100">
+                                <summary>Supervision of AI-driven tasks</summary>
+                                <p>Overseeing and validating AI-generated content and automated processes to ensure accuracy and mitigate risks, such as reviewing AI-generated change plans or training content.</p>
+                            </details>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-3 text-blue-700">Soft Skills</h4>
+                            <details class="mb-3 bg-slate-100">
+                                <summary>Critical Assessment of AI Output</summary>
+                                <p>The ability to critically evaluate the quality, accuracy, and reliability of AI-generated content (e.g., impact assessments, communication drafts), spotting bias, hallucinations, or inconsistencies before use.</p>
+                            </details>
+                            <details class="mb-3 bg-slate-100">
+                                <summary>Ethical Reasoning</summary>
+                                <p>Applying frameworks for responsible and ethical use of GenAI systems, ensuring fairness, privacy, and accountability, especially when dealing with sensitive employee data during change.</p>
+                            </details>
+                            <details class="mb-3 bg-slate-100">
+                                <summary>Emotional Intelligence</summary>
+                                <p>Leveraging empathy to help you guide change, address workforce concerns, and lead human-AI teams effectively, especially crucial when communicating sensitive organisational changes.</p>
+                            </details>
+                            <details class="mb-3 bg-slate-100">
+                                <summary>Cross-Functional Collaboration</summary>
+                                <p>Bridging knowledge gaps and fostering effective communication between diverse teams (e.g., IT, HR, Business Units) during GenAI-driven transformations.</p>
+                            </details>
+                            <details class="mb-3 bg-slate-100">
+                                <summary>Continuous Learning & Adaptation</summary>
+                                <p>Embracing a mindset of perpetual skill development and adapting to evolving technology to thrive in a GenAI-enabled workplace.</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold mb-4 text-center">From Copilot to Cothinker: A Strategic Shift</h3>
+                    <p class="text-slate-600 text-center max-w-2xl mx-auto mb-8">Capgemini's framework highlights two modes of AI interaction. Moving from Copilot to Cothinker is key to unlocking strategic value.</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="border-4 border-blue-200 p-6 rounded-lg bg-blue-50/50">
+                            <h4 class="text-2xl font-bold text-blue-800 mb-3">✈️ Copilot Mode</h4>
+                            <p class="text-slate-700 mb-4">AI performs tasks with minimal human intervention. It's about <strong class="font-semibold">speed, automation, and execution.</strong></p>
+                            <h5 class="font-semibold mb-2">Typical Use Cases:</h5>
+                             <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                <li>Drafting emails & meeting minutes</li>
+                                <li>Correcting grammar & summarising text</li>
+                                <li>Completing or suggesting code snippets</li>
+                                <li>Visualising data from a spreadsheet</li>
+                            </ul>
+                        </div>
+                        <div class="border-4 border-purple-200 p-6 rounded-lg bg-purple-50/50">
+                            <h4 class="text-2xl font-bold text-purple-800 mb-3">🧠 Cothinker Mode</h4>
+                             <p class="text-slate-700 mb-4">Humans and AI collaborate on complex problems, focusing on <strong class="font-semibold">reflection, critical judgment, and co-creation.</strong> This mode nurtures deeper insights and strategic outcomes.</p>
+                            <h5 class="font-semibold mb-2">Typical Use Cases:</h5>
+                             <ul class="list-disc list-inside text-slate-600 space-y-1 mb-4">
+                                <li>Assessing strategic choices & trade-offs in new market entry</li>
+                                <li>Framing complex problems like talent retention from multiple perspectives</li>
+                                <li>Challenging assumptions in a large-scale transformation plan</li>
+                                <li>Cultivating responsible leadership skills through ethical dilemma simulations</li>
+                                <li>Co-creating a multi-year product roadmap</li>
+                                <li>Evaluating potential risks and mitigation strategies for a global supply chain disruption</li>
+                            </ul>
+                            <h5 class="font-semibold mb-2">Example Prompts for Cothinker Mode:</h5>
+                            <details class="bg-purple-100 mb-2">
+                                <summary class="text-purple-800">Prompt 1: Analysing Resistance to Digital Transformation</summary>
+                                <p class="font-medium text-purple-800">"Given our recent internal survey data showing resistance to the upcoming digital transformation among the sales team, analyse potential root causes of this resistance (e.g., lack of understanding, perceived job threat, insufficient training). Based on this, propose three distinct change intervention strategies tailored specifically for this segment, including key messages and anticipated challenges for each."</p>
+                            </details>
+                            <details class="bg-purple-100 mb-2">
+                                <summary class="text-purple-800">Prompt 2: Designing Leadership Development for AI Tools</summary>
+                                <p class="font-medium text-purple-800">"Our new AI tools require significant upskilling for middle management. Design a comprehensive leadership development programme that leverages GenAI for personalised coaching simulations. Outline the curriculum, key learning objectives, and methods for assessing the effectiveness of AI-driven leadership training in fostering adaptive behaviours."</p>
+                            </details>
+                            <details class="bg-purple-100">
+                                <summary class="text-purple-800">Prompt 3: Crafting a 'Future of Work' Communication Strategy</summary>
+                                <p class="font-medium text-purple-800">"We need to launch a new company-wide 'Future of Work' initiative. Draft a compelling change narrative for our internal communications that addresses employee anxieties about AI, highlights opportunities for skill growth, and promotes a 'Cothinker' mindset. Provide three key communication channels and a rationale for each, along with potential FAQs and their ideal AI-generated responses."</p>
+                            </details>
+                        </div>
+                    </div>
                 </div>
             </section>
+            
+            <section id="industries" class="content-section fade-in">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Cross-Industry Insights & Examples</h2>
+                    <p class="max-w-3xl mx-auto text-slate-600">
+                        Generative AI's impact is not theoretical; it's delivering tangible results across diverse sectors. Explore these real-world examples to see how organisations are leveraging AI to drive efficiency, innovation, and value. Use the filters to focus on industries of interest.
+                    </p>
+                </div>
+                <div class="text-center mb-8">
+                    <button class="industry-filter-btn bg-blue-500 text-white py-2 px-4 rounded-full mr-2 mb-2" data-filter="all">All</button>
+                    <button class="industry-filter-btn bg-white text-slate-700 py-2 px-4 rounded-full mr-2 mb-2 border border-slate-300" data-filter="Financial">Financial Services</button>
+                    <button class="industry-filter-btn bg-white text-slate-700 py-2 px-4 rounded-full mr-2 mb-2 border border-slate-300" data-filter="Manufacturing">Manufacturing</button>
+                    <button class="industry-filter-btn bg-white text-slate-700 py-2 px-4 rounded-full mr-2 mb-2 border border-slate-300" data-filter="Retail">Retail</button>
+                    <button class="industry-filter-btn bg-white text-slate-700 py-2 px-4 rounded-full mr-2 mb-2 border border-slate-300" data-filter="IT">IT/Software</button>
+                    <button class="industry-filter-btn bg-white text-slate-700 py-2 px-4 rounded-full mr-2 mb-2 border border-slate-300" data-filter="Education">Education</button>
+                    <button class="industry-filter-btn bg-white text-slate-700 py-2 px-4 rounded-full mr-2 mb-2 border border-slate-300" data-filter="Media">Media & Entertainment</button>
+                    <button class="industry-filter-btn bg-white text-slate-700 py-2 px-4 rounded-full mr-2 mb-2 border border-slate-300" data-filter="Automotive">Automotive</button>
+                </div>
+
+                <div id="industry-gallery" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Financial">
+                        <h4 class="font-bold text-lg mb-2">Financial Services</h4>
+                        <p class="text-slate-600">Morgan Stanley's virtual assistant for wealth management reduced task completion time from 9 hours to 30 minutes, a <a href="https://alyve.ai/blog/genai-case-studies/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">94% reduction</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Manufacturing">
+                        <h4 class="font-bold text-lg mb-2">Manufacturing & Industrial</h4>
+                        <p class="text-slate-600">Siemens used predictive quality control to dramatically reduce defects and increase throughput, leading to <a href="https://alyve.ai/blog/genai-case-studies/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">significant quality improvements</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Retail">
+                        <h4 class="font-bold text-lg mb-2">Retail & Consumer Products</h4>
+                        <p class="text-slate-600">Carrefour cut quote comparison time from 30 minutes to 10 using ChatGPT, a <a href="https://www.capgemini.com/insights/research-library/generative-ai-report/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">67% reduction</strong></a> in process time.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="IT">
+                        <h4 class="font-bold text-lg mb-2">IT & Software Engineering</h4>
+                        <p class="text-slate-600">Hitachi achieved a remarkable <a href="https://www.capgemini.com/insights/research-library/generative-ai-report/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">70-90% success rate</strong></a> in generating application source code with GenAI.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Healthcare">
+                        <h4 class="font-bold text-lg mb-2">Healthcare</h4>
+                        <p class="text-slate-600">The Mayo Clinic's "AI Factory" platform empowers clinicians to build and deploy their own AI use cases, improving <a href="https://alyve.ai/blog/genai-case-studies/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">efficiency and safety of clinical workflows</strong></a>.</p>
+                    </div>
+                     <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Financial">
+                        <h4 class="font-bold text-lg mb-2">Professional Services</h4>
+                        <p class="text-slate-600">Staff at EY & Grant Thornton are saving up to <a href="https://alyve.ai/blog/genai-case-studies/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">7.5 hours per week</strong></a> using Microsoft Copilot for admin and research tasks.</p>
+                    </div>
+                     <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Retail">
+                        <h4 class="font-bold text-lg mb-2">E-commerce</h4>
+                        <p class="text-slate-600">CarMax automated the generation of vehicle descriptions, accelerating content creation by <a href="https://alyve.ai/blog/genai-case-studies/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">90%</strong></a> and increasing online revenues.</p>
+                    </div>
+                     <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Financial">
+                        <h4 class="font-bold text-lg mb-2">Banking</h4>
+                        <p class="text-slate-600">Klarna's AI assistant now handles tasks equivalent to nearly <a href="https://www.capgemini.com/insights/research-library/generative-ai-report/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">700 employees</strong></a>, cutting repeat inquiries by 25%.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Education">
+                        <h4 class="font-bold text-lg mb-2">Education</h4>
+                        <p class="text-slate-600">Duolingo's 'Duolingo Max' uses GenAI for roleplay conversations and personalised explanations, leading to <a href="https://blog.duolingo.com/ai-innovations/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">deeper language comprehension</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Education">
+                        <h4 class="font-bold text-lg mb-2">Education</h4>
+                        <p class="text-slate-600">AI-powered platforms assist educators in generating custom lesson plans, quizzes, and teaching materials, <a href="https://edtechmagazine.com/ai-in-education/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">reducing prep time by up to 30%</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Education">
+                        <h4 class="font-bold text-lg mb-2">Education</h4>
+                        <p class="text-slate-600">Georgia Tech's 'Jill Watson' AI teaching assistant answered student questions with <a href="https://news.gatech.edu/tag/ai" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">97% accuracy</strong></a>, significantly improving student support.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Media">
+                        <h4 class="font-bold text-lg mb-2">Media & Entertainment</h4>
+                        <p class="text-slate-600">Netflix uses GenAI for personalised content recommendations, driving <a href="https://about.netflix.com/en/newsroom/tech-blog" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">higher user engagement and retention</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Media">
+                        <h4 class="font-bold text-lg mb-2">Media & Entertainment</h4>
+                        <p class="text-slate-600">Sony AI created original songs in collaboration with human artists, accelerating the <a href="https://www.sony.com/en/SonyAI/news.html" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">creative music production process</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Media">
+                        <h4 class="font-bold text-lg mb-2">Media & Entertainment</h4>
+                        <p class="text-slate-600">Automated video editing tools powered by GenAI are reducing post-production time for marketing content by <a href="https://www.adobe.com/creativecloud/video/generative-ai.html" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">up to 50%</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Automotive">
+                        <h4 class="font-bold text-lg mb-2">Automotive</h4>
+                        <p class="text-slate-600">General Motors uses generative design to create lighter, stronger vehicle components, reducing material use and <a href="https://www.gm.com/innovation/ai.html" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">improving fuel efficiency</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Automotive">
+                        <h4 class="font-bold text-lg mb-2">Automotive</h4>
+                        <p class="text-slate-600">Tesla's predictive maintenance systems use AI to anticipate part failures, leading to <a href="https://www.teslarati.com/tesla-ai-predictive-maintenance/" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">reduced unplanned downtime by 20%</strong></a>.</p>
+                    </div>
+                    <div class="industry-card bg-white p-6 rounded-lg shadow-md" data-industry="Automotive">
+                        <h4 class="font-bold text-lg mb-2">Automotive</h4>
+                        <p class="text-slate-600">Hyundai Mobis developed an AI-powered infotainment system, enhancing the in-car user experience and leading to <a href="https://en.mobis.co.kr/company/pr.do" target="_blank" class="text-blue-600 hover:underline"><strong class="font-semibold">higher customer satisfaction ratings</strong></a>.</p>
+                    </div>
+                </div>
+            </section>
+
         </main>
-
-        <footer class="text-center py-8 mt-12 border-t border-gray-200">
-            <p class="text-sm text-gray-500">Interactive report generated based on Capgemini research on Generative AI in Change Management.</p>
-        </footer>
-
     </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sections = document.querySelectorAll('.content-section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            function showSection(id) {
+                sections.forEach(section => {
+                    if (section.id === id) {
+                        section.classList.add('active');
+                        section.classList.add('fade-in');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
 
-    const benefitsData = {
-        labels: ['Productivity (Avg)', 'Productivity (High)', 'Customer Engagement', 'Cost Reduction (SAP)'],
-        datasets: [{
-            label: '% Improvement',
-            data: [7.8, 25, 6.7, 20],
-            backgroundColor: [
-                'rgba(15, 118, 110, 0.6)', // teal-700
-                'rgba(13, 148, 136, 0.6)', // teal-600
-                'rgba(20, 184, 166, 0.6)', // teal-500
-                'rgba(245, 158, 11, 0.6)'  // amber-500
-            ],
-            borderColor: [
-                'rgba(15, 118, 110, 1)',
-                'rgba(13, 148, 136, 1)',
-                'rgba(20, 184, 166, 1)',
-                'rgba(245, 158, 11, 1)'
-            ],
-            borderWidth: 1
-        }]
-    };
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === `#${id}`) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+            
+            function updateActiveSection() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 80) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                 
+                if (window.location.hash) {
+                    current = window.location.hash.substring(1);
+                } else {
+                    current = 'overview';
+                }
+                
+                showSection(current);
+            }
 
-    const ctx = document.getElementById('benefitsChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: benefitsData,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: ${context.raw}%`;
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    history.pushState(null, null, `#${targetId}`);
+                    document.getElementById(targetId).scrollIntoView();
+                    showSection(targetId); // Call showSection after scrollIntoView
+                });
+            });
+
+            window.addEventListener('popstate', () => {
+                 updateActiveSection();
+            });
+            
+            updateActiveSection();
+            
+            // Tab functionality for playbook section
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    tabContents.forEach(content => {
+                        if (content.id === tabId) {
+                            content.style.display = 'block';
+                            content.classList.add('fade-in');
+                        } else {
+                            content.style.display = 'none';
+                        }
+                    });
+                });
+            });
+             document.querySelector('.tab-button[data-tab="use-cases"]').classList.add('active');
+
+
+            // Industry filter functionality
+            const filterButtons = document.querySelectorAll('.industry-filter-btn');
+            const industryCards = document.querySelectorAll('.industry-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const filter = button.dataset.filter;
+
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('bg-blue-500', 'text-white');
+                        btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-300');
+                    });
+                    button.classList.add('bg-blue-500', 'text-white');
+                    button.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-300');
+
+
+                    industryCards.forEach(card => {
+                        if (filter === 'all' || card.dataset.industry === filter) {
+                            card.style.display = 'block';
+                            card.classList.add('fade-in');
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Chart.js Initialisations
+            function createMarketGrowthChart() {
+                const ctx = document.getElementById('marketGrowthChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2022', '2023', '2024 (proj)', '2025 (proj)', '2026 (proj)'],
+                        datasets: [{
+                            label: 'Global AI Spending (USD Billions)',
+                            data: [121, 154, 192, 240, 300],
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'USD Billions' } } }
+                    }
+                });
+            }
+
+            function createBenefitsChart() {
+                const ctx = document.getElementById('benefitsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Productivity', 'Customer Engagement', 'Cost Savings (18mo)'],
+                        datasets: [{
+                            label: 'Reported Improvement / Savings (%)',
+                            data: [7.8, 6.7, 15.7],
+                            backgroundColor: ['#10b981', '#34d399', '#6ee7b7'],
+                            borderColor: '#059669',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { beginAtZero: true, title: { display: true, text: '%' } } }
+                    }
+                });
+            }
+
+            function createRisksChart() {
+                const ctx = document.getElementById('risksChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Cybersecurity Risk', 'Limited Talent', 'Lack of Governance', 'Bias Concerns'],
+                        datasets: [{
+                            label: '% of Orgs Citing as a Barrier/Concern',
+                            data: [75, 70, 61, 68],
+                            backgroundColor: ['#ef4444', '#f87171', '#fca5a5', '#fecaca'],
+                            hoverOffset: 4
+                        }]
+                    },
+                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { position: 'top' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += context.parsed + '%';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-            },
-            scales: {
-                x: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Percentage (%)'
-                    }
-                }
+                });
             }
-        }
-    });
-
-    const productivityDetailsModal = document.getElementById('productivityDetailsModal');
-    function showProductivityDetailsModal() {
-        productivityDetailsModal.style.display = 'flex';
-    }
-    function closeProductivityDetailsModal() {
-        productivityDetailsModal.style.display = 'none';
-    }
-    window.showProductivityDetailsModal = showProductivityDetailsModal; // Expose to global scope for onclick
-    window.closeProductivityDetailsModal = closeProductivityDetailsModal; // Expose to global scope for onclick
-
-
-    const opportunityTab = document.getElementById('opp-tab');
-    const riskTab = document.getElementById('risk-tab');
-    const opportunityContent = document.getElementById('opportunity-content');
-    const riskContent = document.getElementById('risk-content');
-    
-    function switchTab(activeTab, inactiveTab, activeContent, inactiveContent) {
-        activeTab.classList.add('active');
-        inactiveTab.classList.remove('active');
-        activeContent.classList.add('active');
-        inactiveContent.classList.remove('active');
-        activeContent.classList.add('card-enter');
-    }
-    
-    opportunityTab.addEventListener('click', () => switchTab(opportunityTab, riskTab, opportunityContent, riskContent));
-    riskTab.addEventListener('click', () => switchTab(riskTab, opportunityTab, riskContent, opportunityContent));
-    switchTab(opportunityTab, riskTab, opportunityContent, riskContent);
-
-
-    const useCases = [
-        // Existing ESM
-        { category: 'esm', title: 'Incident Ticket Automation', description: 'Automates comprehensive ticket creation from call transcriptions, intelligently setting priority based on urgency and tone, and adding detailed resolution notes.' },
-        { category: 'esm', title: 'Proactive Issue Resolution', description: 'Analyzes vast amounts of real-time data for early detection and predictive maintenance, significantly reducing downtime and improving service quality.' },
-
-        // Existing SAP
-        { category: 'sap', title: 'Implementation Workshop Assistant', description: 'Serves as a powerful assistant during SAP implementation workshops, capable of answering complex questions and generating in-depth reports, accelerating the design phase.' },
-        { category: 'sap', title: 'Automated Data Migration', description: 'Automatically maps and transforms data from legacy systems to SAP S/4HANA, substantially reducing manual effort, errors, and accelerating migration processes.' },
-        { category: 'sap', title: 'Automated Documentation (SAP)', description: 'Creates functional specifications, technical designs for custom objects, and configuration documents based on workshop discussions, easing manual burden.' },
-
-        // Existing Finance
-        { category: 'finance', title: 'Touchless Accounts Payable', description: 'Automates invoice scanning, data extraction, PO matching, routing for approval, and fraud detection, bringing a "touchless" element to AP processes.' },
-        { category: 'finance', title: 'Supplier Intelligence', description: 'Analyzes supplier data for reliability and cost-effectiveness, assists in selecting suppliers based on detailed cost comparisons, and identifies potential supply chain gaps.' },
-        { category: 'finance', title: 'Financial Reporting & Insights', description: 'Generates recurring financial reports, automates data import into templates, and delivers board-level insights into performance and market trends.'},
-
-        // Existing Dev
-        { category: 'dev', title: 'SDLC Enhancement', description: 'Enhances every phase of the software development lifecycle from demand analysis to code modernization, documentation, testing, and post-rollout monitoring.' },
-        { category: 'dev', title: 'Developer Co-pilot', description: 'Directly assists developers with coding, debugging, and code review, boosting productivity and ensuring quality assurance. Productivity can improve by 7-18%.' },
-
-        // NEW: Change Management & Analysis
-        { category: 'change_mgmt', title: 'Change Impact Prediction', description: 'Analyzes historical data and current organizational context to predict the precise impact of proposed changes on various departments and roles, reducing disruption risks and enabling proactive planning.' },
-        { category: 'change_mgmt', title: 'Strategic Planning Assistant', description: 'Acts as a "co-thinker" for managers, synthesizing vast amounts of complex information for strategic planning, risk evaluation, and decision-making during major change initiatives.' },
-        { category: 'change_mgmt', title: 'Change Risk Assessment', description: 'Optimizes risk assessment by predicting the likelihood of disruptions and identifying potential bottlenecks during critical organizational transitions, improving resilience.' },
-        { category: 'change_mgmt', title: 'Stakeholder Engagement Mapping', description: 'Analyzes internal and external stakeholder data to identify key influencers, potential resistors, and critical communication channels, informing targeted engagement strategies during change.' },
-
-        // NEW: Training & Development
-        { category: 'training', title: 'Automated Multi-Lingual Training', description: 'Generates comprehensive, context-aware, and multi-lingual training manuals, modules, and FAQs, automating content creation for new systems or processes and supporting diverse workforces.' },
-        { category: 'training', title: 'Personalized Learning Paths', description: 'Provides customized tools, targeted training materials, and interactive learning modules based on individual employee needs, learning styles, and skill gaps identified by AI, reducing workloads and boosting satisfaction.' },
-        { category: 'training', title: 'Skills Gap Analysis & Curriculum Design', description: 'Analyzes current workforce skills against future needs to identify gaps, then suggests and helps design tailored training curricula and development programs.' },
-
-        // NEW: Communications & Stakeholder Engagement
-        { category: 'comms', title: 'Personalized Change Communications', description: 'Generates highly tailored messages, FAQs, and communication plans for diverse employee segments and stakeholder groups, addressing specific anxieties and information needs during change initiatives.' },
-        { category: 'comms', title: 'Proactive Stakeholder Support', description: 'Leverages AI chatbots and virtual assistants to provide real-time, context-aware support and instant answers to queries from employees and stakeholders during transformations, reducing uncertainty.' },
-        { category: 'comms', title: 'Automated Communication Briefs', description: 'Assists managers in rapidly preparing communication briefs, internal information retrieval, and summarizing past events related to complex change initiatives, saving valuable time.' },
-        { category: 'comms', title: 'Digital Human Engagement', description: 'Utilizes digital avatars and virtual humans to deliver natural, empathetic, and scalable communications for broad-scale announcements or training, enhancing engagement and comprehension.' },
-
-        // NEW: General Business Value
-        { category: 'general_biz', title: 'Supply Chain Resilience', description: 'Contributes to enhancing the resilience of supply chains by analyzing vast datasets to identify vulnerabilities and suggest proactive measures.' },
-        { category: 'general_biz', title: 'Recruitment Matching', description: 'Improves the matching process in recruitment by analyzing candidate profiles against job requirements and organizational culture, streamlining hiring.' },
-        { category: 'general_biz', title: 'Predictive Analytics', description: 'Supports advanced predictive analytics for various business areas, from forecasting market trends to anticipating operational bottlenecks, enabling proactive decision-making.' },
-        { category: 'general_biz', title: 'Fraud Detection', description: 'Enhances the detection of fraudulent activities by analyzing patterns and anomalies in large datasets, improving security and compliance.'}
-    ];
-    
-    const useCaseGrid = document.getElementById('use-case-grid');
-    const filterButtons = document.querySelectorAll('.filter-button');
-
-    const renderUseCases = (filter = 'all') => {
-        useCaseGrid.innerHTML = '';
-        const filteredCases = filter === 'all' ? useCases : useCases.filter(c => c.category === filter);
-        filteredCases.forEach((uc, index) => {
-            const card = document.createElement('div');
-            card.className = `p-6 bg-white rounded-lg shadow-md border-l-4 border-teal-500 card-enter`;
-            card.style.animationDelay = `${index * 50}ms`;
-            card.innerHTML = `
-                <h4 class="font-semibold text-lg text-teal-800">${uc.title}</h4>
-                <p class="mt-2 text-gray-600 text-sm">${uc.description}</p>
-            `;
-            useCaseGrid.appendChild(card);
+            
+            createMarketGrowthChart();
+            createBenefitsChart();
+            createRisksChart();
         });
-    };
-
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            renderUseCases(button.dataset.filter);
-        });
-    });
-    
-    document.querySelector('.filter-button[data-filter="all"]').classList.add('active');
-    renderUseCases();
-    
-    const skills = [
-        { type: 'technical', title: 'Prompt Engineering', description: 'The art and science of crafting effective inputs to guide AI models toward desired outputs, e.g., to generate specific change communication messages or training module outlines.' },
-        { type: 'technical', title: 'AI Model Interpretation', description: 'Understanding how AI models function to accurately interpret their outputs and limitations, crucial for validating GenAI-generated analysis or recommendations in change management.' },
-        { type: 'soft', title: 'Critical Assessment of AI Output', description: 'The ability to critically evaluate the quality, accuracy, and reliability of AI-generated content (e.g., impact assessments, communication drafts), spotting bias, hallucinations, or inconsistencies before use.' },
-        { type: 'soft', title: 'Ethical Reasoning', description: 'Applying frameworks for responsible and ethical use of GenAI systems, ensuring fairness, privacy, and accountability, especially when dealing with sensitive employee data during change.' },
-        { type: 'soft', title: 'Emotional Intelligence', description: 'Leveraging human empathy to guide change, address workforce concerns, and lead human-AI teams effectively, especially crucial when communicating sensitive organizational changes.' },
-        { type: 'technical', title: 'Supervision of AI-driven tasks', description: 'Overseeing and validating AI-generated content and automated processes to ensure accuracy and mitigate risks, such as reviewing AI-generated change plans or training content.'},
-        { type: 'soft', title: 'Cross-Functional Collaboration', description: 'Bridging knowledge gaps and fostering effective communication between diverse teams (e.g., IT, HR, business units) during GenAI-driven transformations.'},
-        { type: 'soft', title: 'Continuous Learning & Adaptation', description: 'Embracing a mindset of perpetual skill development and adapting to evolving technology to thrive in a GenAI-enabled workplace.'}
-    ];
-
-    const skillsContainer = document.getElementById('skills-container');
-    skillsContainer.innerHTML = `
-        <div>
-            <h4 class="font-semibold text-lg text-teal-700">Technical Skills</h4>
-            <div class="mt-2 grid gap-2">
-                ${skills.filter(s => s.type === 'technical').map(s => `
-                    <div class="p-3 bg-gray-100 rounded-lg cursor-pointer hover:bg-teal-100 transition-colors" onclick="this.querySelector('p').classList.toggle('hidden')">
-                        <h5 class="font-medium">${s.title}</h5>
-                        <p class="text-sm text-gray-600 mt-1 hidden">${s.description}</p>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-        <div>
-            <h4 class="font-semibold text-lg text-teal-700 mt-4">Soft Skills</h4>
-            <div class="mt-2 grid gap-2">
-                ${skills.filter(s => s.type === 'soft').map(s => `
-                    <div class="p-3 bg-gray-100 rounded-lg cursor-pointer hover:bg-amber-100 transition-colors" onclick="this.querySelector('p').classList.toggle('hidden')">
-                        <h5 class="font-medium">${s.title}</h5>
-                        <p class="text-sm text-gray-600 mt-1 hidden">${s.description}</p>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `;
-
-    const roadmapItems = [
-        { title: '1. Prioritize Governance', content: 'Establish robust, yet agile, governance frameworks *before* widespread adoption. This is not a compliance step but a foundational requirement to mitigate data security, privacy, and IP risks from uncontrolled tool use. Develop clear usage policies and establish continuous monitoring mechanisms.' },
-        { title: '2. Adopt a Human-Centered Approach', content: 'Focus on augmenting human capabilities. Communicate an "augmentation, not replacement" narrative, and proactively address workforce anxieties through transparent, empathetic change management. Ensure AI tools are designed to improve employee experience.' },
-        { title: '3. Invest in Holistic Upskilling', content: 'Implement continuous learning programs that develop a blended skillset (technical and soft skills) tailored to effective human-AI collaboration. Move beyond one-off training; integrate learning into daily workflows and allocate dedicated time for skill development.' },
-        { title: '4. Drive Integrated Transformation', content: 'Move beyond fragmented experiments. Identify and implement GenAI use cases that optimize end-to-end business processes and entire value chains to unlock systemic, enterprise-wide value, rather than just localized efficiency gains.' },
-        { title: '5. Embrace Organizational Agility', content: 'Foster flatter, more collaborative structures that enable rapid iteration and adaptation. Agility is both a prerequisite for and an outcome of successful GenAI integration in a fast-evolving landscape. Empower cross-functional teams and promote a culture of rapid iteration.' },
-        { title: '6. Redefine Success Metrics', content: 'Broaden measurement frameworks beyond pure efficiency. Capture qualitative improvements in employee experience, well-being, and innovation as key indicators of a successful GenAI strategy. Integrate "Experience Level Agreements (XLAs)" as a measure of individual performance, well-being, and perception of service quality.' }
-    ];
-
-    const accordionContainer = document.getElementById('roadmap-accordion');
-    roadmapItems.forEach(item => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'bg-white rounded-lg shadow-md overflow-hidden';
-        itemEl.innerHTML = `
-            <button class="w-full text-left p-4 flex justify-between items-center font-semibold text-lg text-teal-800 hover:bg-gray-100 transition-colors">
-                <span>${item.title}</span>
-                <span class="transform transition-transform duration-300">&#9662;</span>
-            </button>
-            <div class="px-4 pb-4 text-gray-600 hidden">
-                <p>${item.content}</p>
-                <!-- Removed LLM action items button and output -->
-            </div>
-        `;
-        accordionContainer.appendChild(itemEl);
-
-        itemEl.querySelector('button').addEventListener('click', (e) => {
-            const content = itemEl.querySelector('div');
-            const icon = itemEl.querySelector('button span:last-child');
-            content.classList.toggle('hidden');
-            icon.classList.toggle('rotate-180');
-        });
-    });
-
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('main > section');
-
-    const onScroll = () => {
-        let currentSection = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            if (window.scrollY >= sectionTop - 100) {
-                currentSection = section.getAttribute('id');
-            }
-        });
-
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${currentSection}`) {
-                link.classList.add('active');
-            }
-        });
-    };
-    
-    window.addEventListener('scroll', onScroll);
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
-
-});
-</script>
+    </script>
 </body>
 </html>
