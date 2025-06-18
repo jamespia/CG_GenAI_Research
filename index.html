@@ -10,6 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --header-height: 68px; /* Approximate height of the header (py-4 + content) */
+        }
+        @media (min-width: 768px) {
+            :root {
+                --header-height: 76px; /* py-5 + content on md screens */
+            }
+        }
+
         body { 
             font-family: 'Inter', sans-serif; 
             scroll-behavior: smooth; 
@@ -108,7 +117,12 @@
             transition: transform 0.3s ease-in-out;
             transform: translateY(-100%); /* Start off-screen */
             z-index: 51; /* Ensure it's above the header */
-            top: 64px; /* Fixed top position to clear header, adjust if header height changes significantly */
+            top: var(--header-height); /* Use CSS variable for consistency */
+            height: calc(100vh - var(--header-height)); /* Make it fill remaining screen height */
+            overflow-y: auto; /* Allow scrolling if content is long */
+            width: 100%; /* Ensure it spans full width */
+            left: 0; /* Align to the left edge */
+            right: 0; /* Align to the right edge */
         }
         .mobile-menu.active {
             transform: translateY(0); /* Slide in */
@@ -178,7 +192,7 @@
             </nav>
 
             <!-- Mobile Menu (initially hidden and off-screen) -->
-            <div id="mobile-menu" class="mobile-menu fixed inset-x-0 top-18 bg-blue-900/95 backdrop-blur-md shadow-lg md:hidden">
+            <div id="mobile-menu" class="mobile-menu fixed bg-blue-900/95 backdrop-blur-md shadow-lg md:hidden">
                 <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                     <a href="#overview" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700 nav-link-mobile">Overview</a>
                     <a href="#duality" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700 nav-link-mobile">Benefits vs. Risks</a>
@@ -1038,7 +1052,9 @@
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
                     // Adjusted scroll offset for sticky header
-                    if (pageYOffset >= sectionTop - 100) { 
+                    // Use a more dynamic offset if header height can vary greatly
+                    const headerHeight = document.querySelector('header').offsetHeight;
+                    if (pageYOffset >= sectionTop - headerHeight - 10) { // Added a small buffer
                         current = section.getAttribute('id');
                     }
                 });
@@ -1057,7 +1073,9 @@
                     e.preventDefault();
                     const targetId = this.getAttribute('href').substring(1);
                     history.pushState(null, null, `#${targetId}`);
-                    document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest', offsetTop: 80 }); // Smooth scroll with offset
+                    // Dynamically calculate offset for smooth scroll
+                    const headerHeight = document.querySelector('header').offsetHeight;
+                    document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest', offsetTop: headerHeight + 10 }); // Smooth scroll with dynamic offset
                     showSection(targetId); 
                 });
             });
@@ -1073,7 +1091,8 @@
                     e.preventDefault();
                     const targetId = this.getAttribute('href').substring(1);
                     history.pushState(null, null, `#${targetId}`);
-                    document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest', offsetTop: 80 });
+                    const headerHeight = document.querySelector('header').offsetHeight;
+                    document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest', offsetTop: headerHeight + 10 });
                     showSection(targetId);
                     mobileMenu.classList.remove('active'); // Close menu after clicking
                 });
@@ -1083,7 +1102,18 @@
                  updateActiveSection();
             });
             
-            updateActiveSection();
+            updateActiveSection(); // Initial call
+
+            // Re-run updateActiveSection on scroll to ensure active link highlights correctly
+            let scrollTimeout;
+            window.addEventListener('scroll', () => {
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+                scrollTimeout = setTimeout(() => {
+                    updateActiveSection();
+                }, 50); // Debounce to prevent excessive calls
+            });
             
             // Tab functionality for playbook section
             const tabButtons = document.querySelectorAll('.tab-button');
