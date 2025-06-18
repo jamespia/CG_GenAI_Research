@@ -116,16 +116,21 @@
         .mobile-menu {
             transition: transform 0.3s ease-in-out;
             transform: translateY(-100%); /* Start off-screen */
-            z-index: 51; /* Ensure it's above the header */
-            top: var(--header-height); /* Use CSS variable for consistency */
-            height: calc(100vh - var(--header-height)); /* Make it fill remaining screen height */
-            overflow-y: auto; /* Allow scrolling if content is long */
-            width: 100%; /* Ensure it spans full width */
-            left: 0; /* Align to the left edge */
-            right: 0; /* Align to the right edge */
+            z-index: 999; /* Ensure it's on top of everything */
+            top: 0; /* Align to the very top of the viewport */
+            height: 100vh; /* Fill the entire viewport height */
+            width: 100%; /* Fill the entire viewport width */
+            left: 0;
+            right: 0;
+            overflow-y: auto; /* Allow scrolling for menu items if they exceed screen height */
         }
         .mobile-menu.active {
             transform: translateY(0); /* Slide in */
+        }
+
+        /* New: Add padding to the inner content of the mobile menu to clear the header */
+        #mobile-menu-inner {
+            padding-top: var(--header-height); /* Offset content below the fixed header */
         }
 
         /* Styles for playbook section headings to ensure consistent alignment and centering */
@@ -169,7 +174,7 @@
 </head>
 <body class="bg-eef2f6 text-gray-800">
     <div id="app" class="antialiased">
-        <header class="bg-gradient-to-r from-blue-900 to-blue-700 sticky top-0 z-50 shadow-lg py-4 md:py-5">
+        <header class="bg-gradient-to-r from-blue-900 to-blue-700 sticky top-0 z-50 shadow-lg py-4 md:py-5" id="main-header">
             <nav class="container mx-auto px-4 flex items-center justify-between header-nav-container">
                 <!-- Updated title for better mobile centering and prominence -->
                 <h1 class="text-lg sm:text-xl md:text-2xl font-extrabold text-white header-title drop-shadow-md">Capgemini Research Institute Insights: A Gen-AI in Change Management Playbook</h1>
@@ -193,7 +198,7 @@
 
             <!-- Mobile Menu (initially hidden and off-screen) -->
             <div id="mobile-menu" class="mobile-menu fixed bg-blue-900/95 backdrop-blur-md shadow-lg md:hidden">
-                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <div id="mobile-menu-inner" class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                     <a href="#overview" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700 nav-link-mobile">Overview</a>
                     <a href="#duality" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700 nav-link-mobile">Benefits vs. Risks</a>
                     <a href="#playbook" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-700 nav-link-mobile">Implementation Playbook</a>
@@ -659,7 +664,7 @@
                     
                     <div class="space-y-4 mb-8">
                         <details class="bg-gray-50 shadow-md">
-                            <summary class="text-gray-800">Shifting Roles & Structures</summary>
+                            <summary>Shifting Roles & Structures</summary>
                             <div class="p-4 bg-white rounded-lg border border-gray-200 mt-2 text-left shadow-sm">
                                 <h5 class="font-bold text-xl mb-2 text-blue-700">From Generalist to Specialist</h5>
                                 <div class="flex items-center justify-center space-x-4">
@@ -671,7 +676,7 @@
                             </div>
                         </details>
                         <details class="bg-gray-50 shadow-md">
-                            <summary class="text-gray-800">Human-AI Collaboration is the New Norm</summary>
+                            <summary>Human-AI Collaboration is the New Norm</summary>
                             <p class="mt-2 text-gray-600">The future isn't man vs. machine, but man "with" machine. GenAI acts as a "co-thinker" and "spartner" partner, handling routine work and freeing humans to focus on tasks that demand creativity, critical thinking, strategic insight, and emotional intelligence. GenAI is expected to facilitate approximately one-third of entry-level tasks, which leaders believe will accelerate career progression. Organisational structures will become flatter, more agile, and inherently collaborative to adapt to this dynamic environment.</p>
                         </details>
                     </div>
@@ -1018,7 +1023,20 @@
             const navLinks = document.querySelectorAll('.nav-link');
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuInner = document.getElementById('mobile-menu-inner'); // Get the inner div
             const mobileNavLinks = document.querySelectorAll('.nav-link-mobile');
+            const mainHeader = document.getElementById('main-header'); // Get the header element
+
+
+            function updateHeaderHeightVariable() {
+                // Set the CSS variable based on the actual header height
+                document.documentElement.style.setProperty('--header-height', `${mainHeader.offsetHeight}px`);
+            }
+
+            // Update on load and resize
+            updateHeaderHeightVariable();
+            window.addEventListener('resize', updateHeaderHeightVariable);
+
 
             function showSection(id) {
                 sections.forEach(section => {
@@ -1051,9 +1069,7 @@
                 let current = '';
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
-                    // Adjusted scroll offset for sticky header
-                    // Use a more dynamic offset if header height can vary greatly
-                    const headerHeight = document.querySelector('header').offsetHeight;
+                    const headerHeight = mainHeader.offsetHeight; // Get current header height
                     if (pageYOffset >= sectionTop - headerHeight - 10) { // Added a small buffer
                         current = section.getAttribute('id');
                     }
@@ -1074,7 +1090,7 @@
                     const targetId = this.getAttribute('href').substring(1);
                     history.pushState(null, null, `#${targetId}`);
                     // Dynamically calculate offset for smooth scroll
-                    const headerHeight = document.querySelector('header').offsetHeight;
+                    const headerHeight = mainHeader.offsetHeight;
                     document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest', offsetTop: headerHeight + 10 }); // Smooth scroll with dynamic offset
                     showSection(targetId); 
                 });
@@ -1091,7 +1107,7 @@
                     e.preventDefault();
                     const targetId = this.getAttribute('href').substring(1);
                     history.pushState(null, null, `#${targetId}`);
-                    const headerHeight = document.querySelector('header').offsetHeight;
+                    const headerHeight = mainHeader.offsetHeight;
                     document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest', offsetTop: headerHeight + 10 });
                     showSection(targetId);
                     mobileMenu.classList.remove('active'); // Close menu after clicking
