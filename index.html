@@ -10,15 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm Harmony (Light neutrals with muted teal and warm sand accents) -->
-    <!-- Application Structure Plan: The SPA is designed as an interactive journey, not a static document. It starts with a high-level dashboard ("The Pulse") to provide immediate, quantifiable insights. The core of the app is a balanced exploration of "Opportunity & Risk," allowing users to compare benefits and challenges side-by-side. This is followed by a practical, filterable "GenAI in Action" section to ground the concepts in real-world use cases. The journey then shifts to the human impact in "The Future of Work," focusing on roles and skills, and introduces the nuanced concept of AI as "Co-pilot vs. Co-thinker" with LLM-generated examples. It concludes with an actionable "Strategic Roadmap," now enhanced with LLM-generated action items. This non-linear, thematic structure was chosen over the report's sequential layout to empower users to explore topics based on their interest, making the complex information more digestible and engaging. -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive journey, not a static document. It starts with a high-level dashboard ("The Pulse") to provide immediate, quantifiable insights. The core of the app is a balanced exploration of "Opportunity & Risk," allowing users to compare benefits and challenges side-by-side. This is followed by a practical, filterable "GenAI in Action" section to ground the concepts in real-world use cases. The journey then shifts to the human impact in "The Future of Work," focusing on roles and skills, and introduces the nuanced concept of AI as "Co-pilot vs. Co-thinker". It concludes with an actionable "Strategic Roadmap." This non-linear, thematic structure was chosen over the report's sequential layout to empower users to explore topics based on their interest, making the complex information more digestible and engaging. -->
     <!-- Visualization & Content Choices: 
         - Key Metrics (Productivity, Cost Savings): Goal: Inform. Method: Bar Chart (Chart.js) for visual comparison, complemented by prominent text call-outs and an info tooltip for granular data. Interaction: Hover tooltips for precise data, clickable info icon for deeper detail. Justification: More engaging than static numbers, allows for quick comprehension of scale and quick access to further detail.
         - Benefits vs. Risks: Goal: Compare. Method: Two-column layout with interactive toggles/buttons. Interaction: Clicking a benefit or risk reveals detailed text, including specific numbers and challenges. Justification: Facilitates direct comparison and a balanced, detailed understanding of GenAI's duality. Added specific risk details and Gartner prediction.
         - Use Cases: Goal: Organize/Explore. Method: Filterable cards (HTML/CSS/JS). Interaction: Clicking category buttons filters the visible use case cards. Use case descriptions are expanded with more detail. Added "General Business Value" filter. Justification: Allows users to focus on functions relevant to them (e.g., Finance, SAP, Change Management, Comms, Training), improving usability and providing more concrete examples.
         - Org Structure Shift: Goal: Change. Method: A simple visual diagram (HTML/CSS) within the "Future of Work" section. Interaction: Static visual for clarity, supported by text describing human-AI collaboration. Justification: A visual metaphor is more powerful than text alone for explaining the shift from generalist to specialist roles and agile structures.
         - Essential Skills: Goal: Organize. Method: Two interactive lists (Technical/Soft). Interaction: Clicking a skill card reveals its expanded description with relevant examples. Justification: Breaks down a dense list into digestible, interactive components with practical context.
-        - Co-pilots vs. Co-thinkers (LLM Enhanced): Goal: Inform/Differentiate/Elaborate. Method: Two-column text comparison (HTML/CSS) with explicit labels for comparison points, now with LLM-powered example generation. Interaction: Clicking a sparkle button triggers an LLM call to generate and display additional examples, further clarifying the distinction. Justification: Clearly distinguishes key AI roles as described by Capgemini, providing crucial context for human-AI interaction, now with dynamic, on-demand examples for deeper understanding.
-        - Strategic Imperatives (LLM Enhanced): Goal: Inform/Guide/Actionable. Method: Accordion list (HTML/JS) with LLM-powered action item generation. Interaction: Clicking a header expands to show details; clicking a sparkle button triggers an LLM call to generate and display actionable sub-steps. Justification: Presents a high-level checklist that users can expand for more information, now dynamically enhanced with practical, AI-generated next steps for deeper actionability.
+        - Co-pilots vs. Co-thinkers: Goal: Inform/Differentiate. Method: Two-column text comparison (HTML/CSS) with explicit labels for comparison points. Interaction: Static comparison. Justification: Clearly distinguishes key AI roles as described by Capgemini, providing crucial context for human-AI interaction with improved clarity and visual distinction.
+        - Strategic Imperatives: Goal: Inform/Guide. Method: Accordion list (HTML/JS). Interaction: Clicking a header expands to show details, including sub-points and expanded concepts like XLAs. Justification: Presents a high-level checklist that users can expand for more information, making the final recommendations actionable and less overwhelming with deeper detail.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -41,13 +41,7 @@
         .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
         .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
         .info-icon { cursor: pointer; display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center; border-radius: 50%; background-color: #ddd; color: #555; font-size: 10px; margin-left: 5px; }
-        .llm-action-items {
-            background-color: #f0fdf4; /* Light green for generated content */
-            border-left: 4px solid #10b981; /* Green border */
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 4px;
-        }
+        /* Removed .llm-action-items style as LLM features are removed */
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -253,35 +247,21 @@
                 <div class="grid md:grid-cols-2 gap-8 px-4 md:px-8">
                     <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-teal-600">
                         <h3 class="text-2xl font-semibold text-teal-700 mb-4">The Co-pilot</h3>
-                        <p class="text-gray-700">A "co-pilot" AI is designed to assist humans with **routine, predefined, and automated tasks**. Its primary role is to enhance **efficiency and productivity** by taking over repetitive work. Think of it as a highly skilled assistant that executes specific instructions and handles data processing, content generation (e.g., initial drafts of emails, summaries), and basic problem-solving based on established rules.</p>
+                        <p class="text-gray-700">A "co-pilot" AI is designed to assist humans with <strong>routine, predefined, and automated tasks</strong>. Its primary role is to enhance <strong>efficiency and productivity</strong> by taking over repetitive work. Think of it as a highly skilled assistant that executes specific instructions and handles data processing, content generation (e.g., initial drafts of emails, summaries), and basic problem-solving based on established rules.</p>
                         <ul class="mt-4 list-disc list-inside text-gray-600 space-y-2">
                             <li><span class="font-bold text-gray-800">Focus:</span> Task automation, efficiency, execution.</li>
                             <li><span class="font-bold text-gray-800">Benefit:</span> Frees human time from mundane work.</li>
                             <li><span class="font-bold text-gray-800">Example:</span> Generating boilerplate code, automating ticket creation, summarizing long documents.</li>
                         </ul>
-                        <button class="generate-copilot-examples-btn mt-4 px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition-colors text-sm">
-                            ✨ Generate More Examples
-                        </button>
-                        <div class="copilot-examples-output mt-2 text-sm text-gray-700"></div>
-                        <div class="loading-copilot-examples text-center mt-2 hidden">
-                            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-teal-500 inline-block"></div> Loading...
-                        </div>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-600">
                         <h3 class="text-2xl font-semibold text-orange-700 mb-4">The Co-thinker</h3>
-                        <p class="text-gray-700">A "co-thinker" AI goes beyond mere assistance, acting as a **strategic partner and sparring partner**. It aids in **complex problem-solving, strategic planning, and decision-making** by synthesizing information, offering fresh perspectives, and challenging assumptions. This type of AI leverages advanced reasoning to engage in more human-like intellectual collaboration, enhancing the manager's cognitive load and creative output.</p>
+                        <p class="text-gray-700">A "co-thinker" AI goes beyond mere assistance, acting as a <strong>strategic partner and sparring partner</strong>. It aids in <strong>complex problem-solving, strategic planning, and decision-making</strong> by synthesizing information, offering fresh perspectives, and challenging assumptions. This type of AI leverages advanced reasoning to engage in more human-like intellectual collaboration, enhancing the manager's cognitive load and creative output.</p>
                         <ul class="mt-4 list-disc list-inside text-gray-600 space-y-2">
                             <li><span class="font-bold text-gray-800">Focus:</span> Strategic thinking, problem-solving, innovation, decision support.</li>
                             <li><span class="font-bold text-gray-800">Benefit:</span> Augments human creativity and strategic oversight.</li>
                             <li><span class="font-bold text-gray-800">Example:</span> Aiding in risk evaluation, synthesizing market trends for strategic planning, providing diverse perspectives for complex challenges.</li>
                         </ul>
-                        <button class="generate-cothinker-examples-btn mt-4 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors text-sm">
-                            ✨ Generate More Examples
-                        </button>
-                        <div class="cothinker-examples-output mt-2 text-sm text-gray-700"></div>
-                        <div class="loading-cothinker-examples text-center mt-2 hidden">
-                            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500 inline-block"></div> Loading...
-                        </div>
                     </div>
                 </div>
             </section>
@@ -504,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const accordionContainer = document.getElementById('roadmap-accordion');
-    roadmapItems.forEach((item, index) => {
+    roadmapItems.forEach(item => {
         const itemEl = document.createElement('div');
         itemEl.className = 'bg-white rounded-lg shadow-md overflow-hidden';
         itemEl.innerHTML = `
@@ -514,117 +494,18 @@ document.addEventListener('DOMContentLoaded', () => {
             </button>
             <div class="px-4 pb-4 text-gray-600 hidden">
                 <p>${item.content}</p>
-                <button class="generate-action-items-btn mt-4 px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition-colors text-sm">
-                    ✨ Generate Action Items
-                </button>
-                <div class="action-items-output mt-2 text-sm text-gray-700"></div>
-                <div class="loading-indicator text-center mt-2 hidden">
-                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-teal-500 inline-block"></div> Loading...
-                </div>
+                <!-- Removed LLM action items button and output -->
             </div>
         `;
         accordionContainer.appendChild(itemEl);
 
-        const toggleButton = itemEl.querySelector('button:first-of-type');
-        const contentDiv = itemEl.querySelector('.px-4.pb-4');
-        const icon = toggleButton.querySelector('span:last-child');
-        const generateButton = itemEl.querySelector('.generate-action-items-btn');
-        const actionItemsOutput = itemEl.querySelector('.action-items-output');
-        const loadingIndicator = itemEl.querySelector('.loading-indicator');
-
-
-        toggleButton.addEventListener('click', () => {
-            contentDiv.classList.toggle('hidden');
+        itemEl.querySelector('button').addEventListener('click', (e) => {
+            const content = itemEl.querySelector('div');
+            const icon = itemEl.querySelector('button span:last-child');
+            content.classList.toggle('hidden');
             icon.classList.toggle('rotate-180');
         });
-
-        generateButton.addEventListener('click', async () => {
-            actionItemsOutput.innerHTML = ''; // Clear previous output
-            loadingIndicator.classList.remove('hidden'); // Show loading
-
-            const prompt = `Provide 2-3 actionable sub-steps or concrete considerations for implementing the strategic imperative: "${item.title} - ${item.content}". Format them as a concise bulleted list.`;
-
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // Canvas will automatically provide the API key
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    actionItemsOutput.innerHTML = `<div class="llm-action-items">${text}</div>`;
-                } else {
-                    actionItemsOutput.innerHTML = '<div class="llm-action-items text-red-700">Failed to generate action items. Please try again.</div>';
-                }
-            } catch (error) {
-                console.error('Error calling Gemini API:', error);
-                actionItemsOutput.innerHTML = '<div class="llm-action-items text-red-700">An error occurred while generating action items.</div>';
-            } finally {
-                loadingIndicator.classList.add('hidden'); // Hide loading
-            }
-        });
     });
-
-    // LLM features for Co-pilots vs. Co-thinkers
-    const generateCopilotExamplesBtn = document.querySelector('.generate-copilot-examples-btn');
-    const copilotExamplesOutput = document.querySelector('.copilot-examples-output');
-    const loadingCopilotExamples = document.querySelector('.loading-copilot-examples');
-
-    const generateCothinkerExamplesBtn = document.querySelector('.generate-cothinker-examples-btn');
-    const cothinkerExamplesOutput = document.querySelector('.cothinker-examples-output');
-    const loadingCothinkerExamples = document.querySelector('.loading-cothinker-examples');
-
-    async function generateExamples(type, outputDiv, loadingDiv) {
-        outputDiv.innerHTML = '';
-        loadingDiv.classList.remove('hidden');
-
-        let prompt = `Provide 3 additional, concrete examples for a "${type}" AI in a business or management context. Focus on distinct scenarios. Format them as a concise bulleted list.`;
-
-        let chatHistory = [];
-        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-        const payload = { contents: chatHistory };
-        const apiKey = "";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
-            if (result.candidates && result.candidates.length > 0 &&
-                result.candidates[0].content && result.candidates[0].content.parts &&
-                result.candidates[0].content.parts.length > 0) {
-                const text = result.candidates[0].content.parts[0].text;
-                outputDiv.innerHTML = `<div class="llm-action-items">${text}</div>`;
-            } else {
-                outputDiv.innerHTML = '<div class="llm-action-items text-red-700">Failed to generate examples. Please try again.</div>';
-            }
-        } catch (error) {
-            console.error('Error calling Gemini API:', error);
-            outputDiv.innerHTML = '<div class="llm-action-items text-red-700">An error occurred while generating examples.</div>';
-        } finally {
-            loadingDiv.classList.add('hidden');
-        }
-    }
-
-    if (generateCopilotExamplesBtn) {
-        generateCopilotExamplesBtn.addEventListener('click', () => generateExamples('Co-pilot', copilotExamplesOutput, loadingCopilotExamples));
-    }
-    if (generateCothinkerExamplesBtn) {
-        generateCothinkerExamplesBtn.addEventListener('click', () => generateExamples('Co-thinker', cothinkerExamplesOutput, loadingCothinkerExamples));
-    }
-
 
     const navLinks = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('main > section');
@@ -661,4 +542,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
